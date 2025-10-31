@@ -1,0 +1,15 @@
+[gd_scene load_steps=3 format=3 uid="uid://cqc2k013gs4xo"]
+
+[ext_resource type="Texture2D" uid="uid://6jgpeuk6q8wc" path="res://icon.svg" id="1_dmdpn"]
+[ext_resource type="Script" path="res://Scripts/jump_vector.gd" id="1_ip7wa"]
+
+[node name="jump_vector" type="CharacterBody2D"]
+script = ExtResource("1_ip7wa")
+
+[node name="Icon" type="Sprite2D" parent="."]
+position = Vector2(200, 0)
+scale = Vector2(0.2, 0.2)
+texture = ExtResource("1_dmdpn")
+
+[node name="Marker2D" type="Marker2D" parent="."]
+position = Vector2(200, 0)

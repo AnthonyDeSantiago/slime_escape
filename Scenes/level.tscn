@@ -1,0 +1,28 @@
+[gd_scene load_steps=3 format=3 uid="uid://wefjfva66bka"]
+
+[ext_resource type="PackedScene" uid="uid://bk52nbufeoc8h" path="res://Scenes/player.tscn" id="1_1ono0"]
+[ext_resource type="PackedScene" uid="uid://csty5ii6bk8gu" path="res://Scenes/obsticle.tscn" id="2_4pdkm"]
+
+[node name="level" type="Node2D"]
+
+[node name="obsticle" parent="." instance=ExtResource("2_4pdkm")]
+position = Vector2(39, -711)
+is_rotating = true
+rotate_speed = 0.1
+
+[node name="obsticle2" parent="." instance=ExtResource("2_4pdkm")]
+position = Vector2(-2, 239)
+
+[node name="obsticle3" parent="." instance=ExtResource("2_4pdkm")]
+position = Vector2(432, 10)
+rotation = 1.5708
+
+[node name="obsticle4" parent="." instance=ExtResource("2_4pdkm")]
+position = Vector2(-428, 3)
+rotation = 1.5708
+
+[node name="player" parent="." instance=ExtResource("1_1ono0")]
+scale = Vector2(0.5, 0.5)
+
+[node name="Camera2D" type="Camera2D" parent="player"]
+scale = Vector2(2, 2)
