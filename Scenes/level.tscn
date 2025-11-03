@@ -26,7 +26,9 @@ rotation = 1.5708
 
 [node name="player" parent="." instance=ExtResource("1_1ono0")]
 
-[node name="Camera2D" type="Camera2D" parent="player"]
-scale = Vector2(2, 2)
+[node name="RayCast2D" type="RayCast2D" parent="player"]
 
 [node name="line_drawer" parent="." instance=ExtResource("4_joj3n")]
+
+[node name="Camera2D" type="Camera2D" parent="."]
+scale = Vector2(2, 2)
