@@ -2,38 +2,73 @@ extends Node2D
 
 @onready var player = $player
 @onready var line_drawer = $line_drawer
-@onready var cast: RayCast2D = $player/RayCast2D
+@onready var cast: RayCast2D = $RayCast2D
+@onready var path_to_follow: PathFollow2D = $Path2D/PathFollow2D
+@export var texture: Texture2D
+@export var ray_length: float = 10000
 
-var circle_pos: Vector2
-var new_position: Vector2
+var new_position
+var current_norm
+var norm
+var rate = 0.015
+var epsilon = 0.25
+const CAM_SPEED = 0
+var is_clockwise = true
 
 func _draw():
-	if circle_pos:
-		draw_circle(circle_pos, 25, Color.GREEN)
+	if new_position:
+		draw_dashed_line(player.global_position, new_position, Color.WHEAT, 10, 20, true, true)
+		draw_circle(new_position, 25, Color.GREEN)
+		if norm:
+			draw_line(cast.get_collision_point(), norm + new_position,  Color.RED, 10)
 
 func _ready():
 	line_drawer.start = player.global_position
 	line_drawer.end = get_global_mouse_position()
 	line_drawer.queue_redraw()
 	cast.exclude_parent = true
+	cast.target_position = cast.target_position * ray_length
+	norm = cast.target_position
 
-func _physics_process(delta):
-	cast.target_position = (get_global_mouse_position() - player.global_position).normalized() * 1000
-	line_drawer.start = player.global_position
-	line_drawer.end = get_global_mouse_position()
-	line_drawer.queue_redraw()
+func _process(delta):
+	cast.target_position = cast.target_position.rotated(rate)
+	if current_norm:
+		var approaching_max = abs(cast.target_position.angle_to(current_norm.rotated(PI/2 - epsilon)))
+		var approaching_min = abs(cast.target_position.angle_to(current_norm.rotated(-PI/2 + epsilon)))
+		#print("max:", approaching_max, " min:", approaching_min)
+		
+		if approaching_max < epsilon:
+			rotate_counter_clockwise()
+			
+		if approaching_min < epsilon:
+			rotate_clockwise()
+		
+		
+	path_to_follow.progress_ratio += CAM_SPEED * delta
 	
-	var space_state = get_world_2d().direct_space_state
-	var jump_vec = get_global_mouse_position().normalized() * 1000
-	var query = PhysicsRayQueryParameters2D.create(player.global_position, jump_vec)
-	var result = space_state.intersect_ray(query)
-	
-	
-	if Input.is_action_just_pressed("jump") and new_position:
-		player.global_position = new_position
-	
-	if result:
-		print(result)
-		circle_pos = cast.get_collision_point()
+	if cast.is_colliding():
 		new_position = cast.get_collision_point()
-		queue_redraw()
+		norm = (cast.get_collision_normal() * ray_length)
+	else:
+		new_position = null
+		norm = null
+	
+	if cast.is_colliding() and Input.is_action_just_pressed("jump") and new_position:
+		player.global_position = new_position + cast.get_collision_normal()
+		cast.global_position = player.global_position
+		cast.target_position = norm
+		current_norm = norm
+	
+	queue_redraw()
+
+func rotate_clockwise():
+	rate = abs(rate)
+
+func rotate_counter_clockwise():
+	rate = -rate
+
+func landed_higher(new_pos: Vector2) -> bool:
+	return new_pos.y < player.global_position.y
+
+func landed_lower(new_pos: Vector2) -> bool:
+	return new_pos.y > player.global_position.y

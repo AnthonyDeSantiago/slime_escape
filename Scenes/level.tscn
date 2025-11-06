@@ -1,34 +1,53 @@
-[gd_scene load_steps=5 format=3 uid="uid://wefjfva66bka"]
+[gd_scene load_steps=7 format=3 uid="uid://wefjfva66bka"]
 
 [ext_resource type="PackedScene" uid="uid://bk52nbufeoc8h" path="res://Scenes/player.tscn" id="1_1ono0"]
 [ext_resource type="Script" path="res://Scripts/level.gd" id="1_s8ag2"]
 [ext_resource type="PackedScene" uid="uid://csty5ii6bk8gu" path="res://Scenes/obsticle.tscn" id="2_4pdkm"]
+[ext_resource type="Texture2D" uid="uid://6jgpeuk6q8wc" path="res://icon.svg" id="2_7nw55"]
 [ext_resource type="PackedScene" uid="uid://dt20u7s3xyeda" path="res://Scenes/line_drawer.tscn" id="4_joj3n"]
+
+[sub_resource type="Curve2D" id="Curve2D_pnink"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 0, 0, 0, -1000, 0, 0, 0, -1000)
+}
+point_count = 2
 
 [node name="level" type="Node2D"]
 script = ExtResource("1_s8ag2")
+texture = ExtResource("2_7nw55")
 
-[node name="obsticle" parent="." instance=ExtResource("2_4pdkm")]
-position = Vector2(39, -711)
-is_rotating = true
-rotate_speed = 0.1
+[node name="RayCast2D" type="RayCast2D" parent="."]
+target_position = Vector2(0, 1000)
 
 [node name="obsticle2" parent="." instance=ExtResource("2_4pdkm")]
-position = Vector2(-2, 239)
+position = Vector2(0, 454)
 
 [node name="obsticle3" parent="." instance=ExtResource("2_4pdkm")]
-position = Vector2(432, 10)
+position = Vector2(303, -588)
+rotation = 1.5708
+
+[node name="obsticle6" parent="." instance=ExtResource("2_4pdkm")]
+position = Vector2(314, -1750)
 rotation = 1.5708
 
 [node name="obsticle4" parent="." instance=ExtResource("2_4pdkm")]
-position = Vector2(-428, 3)
+position = Vector2(-255, 67)
+rotation = 1.5708
+
+[node name="obsticle5" parent="." instance=ExtResource("2_4pdkm")]
+position = Vector2(-280, -1203)
 rotation = 1.5708
 
 [node name="player" parent="." instance=ExtResource("1_1ono0")]
 
-[node name="RayCast2D" type="RayCast2D" parent="player"]
-
 [node name="line_drawer" parent="." instance=ExtResource("4_joj3n")]
 
-[node name="Camera2D" type="Camera2D" parent="."]
+[node name="Path2D" type="Path2D" parent="."]
+curve = SubResource("Curve2D_pnink")
+
+[node name="PathFollow2D" type="PathFollow2D" parent="Path2D"]
+rotation = 1.5708
+rotates = false
+
+[node name="Camera2D" type="Camera2D" parent="Path2D/PathFollow2D"]
 scale = Vector2(2, 2)
