@@ -1,0 +1,21 @@
+[gd_scene load_steps=6 format=3 uid="uid://bur76sa04h8er"]
+
+[ext_resource type="Script" uid="uid://cra8i6jgktjht" path="res://Scripts/reader.gd" id="1_nedio"]
+[ext_resource type="Texture2D" uid="uid://jaqkkybodcn" path="res://Assets/level_texture.png" id="2_r3a0q"]
+[ext_resource type="Texture2D" uid="uid://frqamm0rvta8" path="res://Assets/test_2.png" id="4_h1epf"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_8jofl"]
+texture = ExtResource("4_h1epf")
+0:0/0 = 0
+
+[sub_resource type="TileSet" id="TileSet_hialn"]
+sources/0 = SubResource("TileSetAtlasSource_8jofl")
+
+[node name="reader" type="Node2D"]
+script = ExtResource("1_nedio")
+level_texture = ExtResource("2_r3a0q")
+
+[node name="TileMapLayer" type="TileMapLayer" parent="."]
+tile_set = SubResource("TileSet_hialn")
+
+[node name="Camera2D" type="Camera2D" parent="."]

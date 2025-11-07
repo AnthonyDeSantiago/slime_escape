@@ -6,23 +6,27 @@ extends Node2D
 @onready var path_to_follow: PathFollow2D = $Path2D/PathFollow2D
 @export var texture: Texture2D
 @export var ray_length: float = 10000
+@export var start_rate = 1
+@export var speed_up_rate = 5
 
+const CAM_SPEED = .1
 var new_position
 var current_norm
 var norm
-var rate = 0.015
+var rate = 1
 var epsilon = 0.25
-const CAM_SPEED = 0
 var is_clockwise = true
+var is_on_wall = false
 
 func _draw():
 	if new_position:
 		draw_dashed_line(player.global_position, new_position, Color.WHEAT, 10, 20, true, true)
 		draw_circle(new_position, 25, Color.GREEN)
-		if norm:
-			draw_line(cast.get_collision_point(), norm + new_position,  Color.RED, 10)
+		#if norm:
+			#draw_line(cast.get_collision_point(), norm + new_position,  Color.RED, 10)
 
 func _ready():
+	rate = start_rate
 	line_drawer.start = player.global_position
 	line_drawer.end = get_global_mouse_position()
 	line_drawer.queue_redraw()
@@ -31,7 +35,7 @@ func _ready():
 	norm = cast.target_position
 
 func _process(delta):
-	cast.target_position = cast.target_position.rotated(rate)
+	cast.target_position = cast.target_position.rotated(rate * delta)
 	if current_norm:
 		var approaching_max = abs(cast.target_position.angle_to(current_norm.rotated(PI/2 - epsilon)))
 		var approaching_min = abs(cast.target_position.angle_to(current_norm.rotated(-PI/2 + epsilon)))
@@ -42,7 +46,6 @@ func _process(delta):
 			
 		if approaching_min < epsilon:
 			rotate_clockwise()
-		
 		
 	path_to_follow.progress_ratio += CAM_SPEED * delta
 	
@@ -66,9 +69,3 @@ func rotate_clockwise():
 
 func rotate_counter_clockwise():
 	rate = -rate
-
-func landed_higher(new_pos: Vector2) -> bool:
-	return new_pos.y < player.global_position.y
-
-func landed_lower(new_pos: Vector2) -> bool:
-	return new_pos.y > player.global_position.y
