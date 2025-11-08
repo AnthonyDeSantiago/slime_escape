@@ -28,6 +28,10 @@ jump={
 ]
 }
 
+[physics]
+
+2d/default_gravity=69.77800000000025
+
 [rendering]
 
 renderer/rendering_method="gl_compatibility"

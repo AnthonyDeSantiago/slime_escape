@@ -11,19 +11,29 @@ var data: PackedByteArray
 var height: int
 var width: int
 var offset: Vector2
+var mult: float = 3
 func _ready() -> void:
 	if level_texture:
 		image = level_texture.get_image()
 		height = image.get_height()
 		width = image.get_width()
-		offset = Vector2(-width / 2, height / 2)
-	m.set_cell(Vector2(0,0), 0, Vector2(0,0))
+		offset = Vector2(-width / 2, -height / 2)
+		for y in range(height):
+			for x in range(width):
+				var pixel = image.get_pixel(x, y)
+				var position = (Vector2(x, y) * 1)
+				if pixel == Color.BLACK:
+					print("drawing")
+					m.set_cell(position, 0, Vector2(0, 0))
+				#print("x:", x, " y:", y, " pixel:", image.get_pixel(x, y))
+	#m.set_cell(Vector2(0,0), 0, Vector2(0,0))
 	pass
 
 func _process(delta: float) -> void:
 	pass
 
 func create_level():
+	pass
 	
 func my_function():
 	pass

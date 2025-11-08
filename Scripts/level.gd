@@ -9,7 +9,7 @@ extends Node2D
 @export var start_rate = 1
 @export var speed_up_rate = 5
 
-const CAM_SPEED = .1
+const CAM_SPEED = 0
 var new_position
 var current_norm
 var norm
@@ -26,10 +26,8 @@ func _draw():
 			#draw_line(cast.get_collision_point(), norm + new_position,  Color.RED, 10)
 
 func _ready():
+	cast.global_position = player.global_position
 	rate = start_rate
-	line_drawer.start = player.global_position
-	line_drawer.end = get_global_mouse_position()
-	line_drawer.queue_redraw()
 	cast.exclude_parent = true
 	cast.target_position = cast.target_position * ray_length
 	norm = cast.target_position

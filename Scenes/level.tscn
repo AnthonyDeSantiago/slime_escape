@@ -1,10 +1,9 @@
-[gd_scene load_steps=7 format=3 uid="uid://wefjfva66bka"]
+[gd_scene load_steps=6 format=3 uid="uid://wefjfva66bka"]
 
 [ext_resource type="PackedScene" uid="uid://bk52nbufeoc8h" path="res://Scenes/player.tscn" id="1_1ono0"]
 [ext_resource type="Script" uid="uid://d3ye14xnv6dkt" path="res://Scripts/level.gd" id="1_s8ag2"]
-[ext_resource type="PackedScene" uid="uid://csty5ii6bk8gu" path="res://Scenes/obsticle.tscn" id="2_4pdkm"]
 [ext_resource type="Texture2D" uid="uid://6jgpeuk6q8wc" path="res://icon.svg" id="2_7nw55"]
-[ext_resource type="PackedScene" uid="uid://dt20u7s3xyeda" path="res://Scenes/line_drawer.tscn" id="4_joj3n"]
+[ext_resource type="PackedScene" uid="uid://bur76sa04h8er" path="res://Scenes/reader.tscn" id="3_0f350"]
 
 [sub_resource type="Curve2D" id="Curve2D_pnink"]
 _data = {
@@ -16,31 +15,14 @@ point_count = 2
 script = ExtResource("1_s8ag2")
 texture = ExtResource("2_7nw55")
 
+[node name="reader" parent="." instance=ExtResource("3_0f350")]
+position = Vector2(-360, -640)
+
 [node name="RayCast2D" type="RayCast2D" parent="."]
 target_position = Vector2(0, 1000)
 
-[node name="obsticle2" parent="." instance=ExtResource("2_4pdkm")]
-position = Vector2(0, 454)
-
-[node name="obsticle3" parent="." instance=ExtResource("2_4pdkm")]
-position = Vector2(303, -588)
-rotation = 1.5708
-
-[node name="obsticle6" parent="." instance=ExtResource("2_4pdkm")]
-position = Vector2(314, -1750)
-rotation = 1.5708
-
-[node name="obsticle4" parent="." instance=ExtResource("2_4pdkm")]
-position = Vector2(-255, 67)
-rotation = 1.5708
-
-[node name="obsticle5" parent="." instance=ExtResource("2_4pdkm")]
-position = Vector2(-280, -1203)
-rotation = 1.5708
-
 [node name="player" parent="." instance=ExtResource("1_1ono0")]
-
-[node name="line_drawer" parent="." instance=ExtResource("4_joj3n")]
+position = Vector2(-1, 511)
 
 [node name="Path2D" type="Path2D" parent="."]
 curve = SubResource("Curve2D_pnink")
