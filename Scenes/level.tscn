@@ -17,6 +17,7 @@ texture = ExtResource("2_7nw55")
 
 [node name="reader" parent="." instance=ExtResource("3_0f350")]
 position = Vector2(-360, -640)
+texture_scale = 2
 
 [node name="RayCast2D" type="RayCast2D" parent="."]
 target_position = Vector2(0, 1000)

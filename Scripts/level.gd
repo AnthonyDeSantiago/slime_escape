@@ -1,6 +1,6 @@
 extends Node2D
 
-@onready var player = $player
+@onready var player: Player = $player
 @onready var line_drawer = $line_drawer
 @onready var cast: RayCast2D = $RayCast2D
 @onready var path_to_follow: PathFollow2D = $Path2D/PathFollow2D
@@ -17,6 +17,8 @@ var rate = 1
 var epsilon = 0.25
 var is_clockwise = true
 var is_on_wall = false
+var is_on_floor = false
+var is_in_air = false
 
 func _draw():
 	if new_position:
@@ -33,18 +35,19 @@ func _ready():
 	norm = cast.target_position
 
 func _process(delta):
+	cast.global_position = player.global_position
 	cast.target_position = cast.target_position.rotated(rate * delta)
 	if current_norm:
 		var approaching_max = abs(cast.target_position.angle_to(current_norm.rotated(PI/2 - epsilon)))
 		var approaching_min = abs(cast.target_position.angle_to(current_norm.rotated(-PI/2 + epsilon)))
-		#print("max:", approaching_max, " min:", approaching_min)
 		
 		if approaching_max < epsilon:
 			rotate_counter_clockwise()
 			
 		if approaching_min < epsilon:
 			rotate_clockwise()
-		
+			
+	
 	path_to_follow.progress_ratio += CAM_SPEED * delta
 	
 	if cast.is_colliding():
@@ -55,10 +58,16 @@ func _process(delta):
 		norm = null
 	
 	if cast.is_colliding() and Input.is_action_just_pressed("jump") and new_position:
-		player.global_position = new_position + cast.get_collision_normal()
+		#player.global_position = new_position + cast.get_collision_normal()
+		player.global_position = new_position
 		cast.global_position = player.global_position
+		if player.normal_vector:
+			print("has normal")
 		cast.target_position = norm
 		current_norm = norm
+	
+	if player.is_on_floor():
+		current_norm = Vector2.UP
 	
 	queue_redraw()
 
