@@ -20,6 +20,7 @@ position = Vector2(-360, -640)
 texture_scale = 2
 
 [node name="RayCast2D" type="RayCast2D" parent="."]
+visible = false
 target_position = Vector2(0, 1000)
 
 [node name="player" parent="." instance=ExtResource("1_1ono0")]
