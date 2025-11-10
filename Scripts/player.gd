@@ -11,40 +11,32 @@ class_name Player
 @export var SPEED: float = 25000
 @export var JUMP_SPEED: float = -500
 
-var viewport_hieght
-var viewport_width
-var viewport_position
-
 var normal_vector: Vector2 = Vector2.UP
 
 func _ready() -> void:
-	viewport_hieght = get_viewport_rect().size.y
-	viewport_width = get_viewport_rect().size.x
-	viewport_position = get_viewport_rect().position
-	#print("hieght:", viewport_hieght, " width:", viewport_width, " position:", viewport_position)
 	normal_vector = Vector2.UP
 
 func _physics_process(delta: float) -> void:
 	var direction := Input.get_axis("left", "right")
 	shoot_ray()
 		
-	viewport_position = get_viewport_rect().position
-	if not is_on_floor() and not is_on_wall():
+	if not is_on_floor():
 		velocity += get_gravity() * delta
 	
-	if not is_on_floor() and not is_on_wall():
-		normal_vector = Vector2(0, 0)
-		pass
-	
 	if cast.is_colliding() and Input.is_action_just_pressed("teleport"):
+		Engine.time_scale = 0.2
+		
+	if cast.is_colliding() and Input.is_action_just_released("teleport"):
+		Engine.time_scale = 1.0
+		get_parent().player_moved = true
 		teleport()
+		
 	if not is_on_wall() and not is_on_floor():
 		if direction:
-			velocity.x = direction * SPEED * delta
+			velocity.x = direction * SPEED/2 * delta
 			
-	if is_on_floor_only():
+	if is_on_floor():
 		if direction:
-			print(direction)
 			if direction < 0:
 				flip_h(false)
 			else:
@@ -58,10 +50,10 @@ func _physics_process(delta: float) -> void:
 		if Input.is_action_just_pressed("jump"):
 			velocity.y = JUMP_SPEED
 	
-	if is_on_wall_only():
+	if is_on_wall_only() and velocity.y > 0:
 		wall_slide(delta)
 		if Input.is_action_just_pressed("jump"):
-			velocity.x = JUMP_SPEED/4 * -get_wall_normal().x
+			velocity.x = JUMP_SPEED * -get_wall_normal().x
 			velocity.y = JUMP_SPEED
 		
 	#idle()
@@ -77,10 +69,9 @@ func wall_slide(delta: float):
 	var dot_prod = get_wall_normal().dot(Vector2.RIGHT)
 	if dot_prod > 0:
 		animatedSprite.flip_h = false
-		normal_vector = Vector2.RIGHT
 	else:
 		animatedSprite.flip_h = true
-		normal_vector = Vector2.LEFT
+	
 	animationPlayer.play("wall_slide")
 	velocity.y = wall_slide_speed * delta
 		

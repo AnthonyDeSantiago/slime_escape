@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cygc0kisn366v"
-path="res://.godot/imported/all_da_brics3.png-1b95e19c6a056a9a36db31661360e929.ctex"
+uid="uid://dj4ccj1vb7sco"
+path="res://.godot/imported/Bricks.png-924dfad26007a16d8e6c6754e955eaa5.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Tileset/Tileset/all_da_brics3.png"
-dest_files=["res://.godot/imported/all_da_brics3.png-1b95e19c6a056a9a36db31661360e929.ctex"]
+source_file="res://Assets/Tileset/Tileset/Bricks.png"
+dest_files=["res://.godot/imported/Bricks.png-924dfad26007a16d8e6c6754e955eaa5.ctex"]
 
 [params]
 
