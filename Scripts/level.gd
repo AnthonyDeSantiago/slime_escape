@@ -1,6 +1,5 @@
 extends Node2D
 
-@onready var line_drawer = $line_drawer
 @onready var cast: RayCast2D = $RayCast2D
 @onready var path_to_follow: PathFollow2D = $Path2D/PathFollow2D
 @onready var ui_game_over: VBoxContainer = $UI_Layer/UI/Game_Over
@@ -10,14 +9,17 @@ extends Node2D
 @onready var label_game_timer: Label = $UI_Layer/HUD/Game_Timer_Label
 @onready var label_game_over: Label = $UI_Layer/UI/Game_Over/Game_Over_Label
 @onready var timer_game: Timer = $Game_Timer
+@onready var tile_water: TileMapLayer = $water
 
 @export var texture: Texture2D
 @export var ray_length: float = 10000
 @export var start_rate = 1
 @export var speed_up_rate = 5
 @export var player_scene: PackedScene
+@export var CAM_SPEED = 0.02
+@export var start_tilemap_position = 600
 
-var CAM_SPEED = .02
+var cam_speed
 var player: Player
 var cast_target_position
 var player_moved: bool = false
@@ -26,6 +28,7 @@ var viewport_hieght: float
 var viewport_width: float
 
 func _ready()->void:
+	tile_water.global_position.y = start_tilemap_position
 	label_game_timer.text = str(int(timer_game.time_left))
 	viewport_size = get_viewport().get_visible_rect().size
 	viewport_hieght = viewport_size.y
@@ -39,9 +42,12 @@ func _draw():
 		draw_circle(cast_target_position, 10, Color.AQUA)
 
 func _process(delta):
+	var water_dist_from_top: float = -abs(start_tilemap_position - win_coord.position.y)
+	move_water(water_dist_from_top, delta)
+	adjust_camera_speed(delta)
 	label_game_timer.text = str(int(timer_game.time_left))
 	if player_moved:
-		path_to_follow.progress_ratio += CAM_SPEED * delta
+		path_to_follow.progress_ratio += cam_speed
 	
 	if player.global_position.y <= win_coord.global_position.y:
 		win_condition()
@@ -53,14 +59,29 @@ func _process(delta):
 func win_condition():
 	get_tree().paused = true
 	timer_game.paused = true
-	CAM_SPEED = 0
+	cam_speed = 0
 	ui_game_win.visible = true
 
 func lose_condition():
 	get_tree().paused = true
 	ui_game_over.visible = true
-	CAM_SPEED = 0
+	cam_speed = 0
 
+func adjust_camera_speed(delta):
+	var dif = (camera.global_position.y - player.global_position.y) / (viewport_hieght/2)
+	
+	if player.global_position.y < camera.global_position.y:
+		print("difference: ", dif)
+		cam_speed = (CAM_SPEED + dif/10) * delta
+	else:
+		cam_speed = CAM_SPEED * delta
+		print("player below")
+	
+func move_water(distance: float, delta: float):
+	var water_vel = distance/20
+	var new_y = tile_water.global_position.y + water_vel * delta
+	tile_water.global_position.y  = new_y
+	
 func _on_play_again_button_pressed() -> void:
 	get_tree().paused = false
 	get_tree().reload_current_scene()
@@ -71,7 +92,6 @@ func _on_try_again_button_pressed() -> void:
 	get_tree().paused = false
 	get_tree().reload_current_scene()
 	pass # Replace with function body.
-
 
 func _on_game_timer_timeout() -> void:
 	label_game_over.text = "Time ran out!"

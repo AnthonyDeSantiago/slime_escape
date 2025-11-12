@@ -5,6 +5,7 @@ class_name Player
 @onready var animatedSprite: AnimatedSprite2D = $AnimatedSprite2D
 @onready var animationPlayer: AnimationPlayer = $AnimationPlayer
 @onready var cast: RayCast2D = $RayCast2D
+@onready var timer_coyote: Timer = $CoyoteTimer
 
 @export var wall_slide_speed: float = 9000
 @export var teleport_range: float = 800
@@ -12,6 +13,7 @@ class_name Player
 @export var JUMP_SPEED: float = -500
 
 var normal_vector: Vector2 = Vector2.UP
+var jumped: bool
 
 func _ready() -> void:
 	normal_vector = Vector2.UP
@@ -22,6 +24,8 @@ func _physics_process(delta: float) -> void:
 		
 	if not is_on_floor():
 		velocity += get_gravity() * delta
+	else:
+		jumped = false
 	
 	if cast.is_colliding() and Input.is_action_just_pressed("teleport"):
 		Engine.time_scale = 0.2
@@ -47,18 +51,27 @@ func _physics_process(delta: float) -> void:
 			animationPlayer.play("idle")
 			velocity.x = move_toward(velocity.x, 0, SPEED)
 		
-		if Input.is_action_just_pressed("jump"):
+		if not jumped and Input.is_action_just_pressed("jump"):
 			velocity.y = JUMP_SPEED
+			jumped = true
 	
 	if is_on_wall_only() and velocity.y > 0:
 		wall_slide(delta)
 		if Input.is_action_just_pressed("jump"):
 			velocity.x = JUMP_SPEED * -get_wall_normal().x
 			velocity.y = JUMP_SPEED
+			jumped = true
+	
+	if not jumped and Input.is_action_just_pressed("jump") and (is_on_floor() or not timer_coyote.is_stopped()):
+		velocity.y = JUMP_SPEED
+		jumped = true
 		
-	#idle()
+	var was_on_floor = is_on_floor()
 	move_and_slide()
+	if not is_on_floor() and was_on_floor:
+		timer_coyote.start()
 	queue_redraw()
+	
 	
 func idle():
 	if is_on_floor():
@@ -93,4 +106,5 @@ func flip_h(flag: bool):
 		animatedSprite.flip_h = true
 	else:
 		animatedSprite.flip_h = false
+
 	
