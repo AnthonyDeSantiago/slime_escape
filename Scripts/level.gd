@@ -77,7 +77,7 @@ func adjust_camera_speed(delta):
 	
 func move_water(distance: float, delta: float):
 	var water_vel = distance/20
-	var new_y = tile_water.global_position.y + water_vel * delta
+	var new_y = tile_water.global_position.y + water_vel * delta * 0
 	tile_water.global_position.y  = new_y
 	
 func _on_play_again_button_pressed() -> void:

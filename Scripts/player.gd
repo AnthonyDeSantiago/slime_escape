@@ -13,60 +13,52 @@ class_name Player
 @export var JUMP_SPEED: float = -500
 
 var normal_vector: Vector2 = Vector2.UP
-var jumped: bool
+var was_on_floor: bool
+var jump_amount: int
 
 func _ready() -> void:
 	normal_vector = Vector2.UP
 
 func _physics_process(delta: float) -> void:
 	var direction := Input.get_axis("left", "right")
+	var grounded = is_on_floor()
 	shoot_ray()
-		
-	if not is_on_floor():
+	
+	if not grounded:
 		velocity += get_gravity() * delta
+		animationPlayer.play("wall_slide")
+		if direction:
+			animatedSprite.flip_h = velocity.x > 0
 	else:
-		jumped = false
+		jump_amount = 0
+	
+	if direction:
+		velocity.x = direction * SPEED * delta
+		if grounded:
+			animatedSprite.flip_h = velocity.x > 0
+			animationPlayer.play("walk")
+	else:
+		velocity.x = move_toward(velocity.x, 0, SPEED)
+		if grounded:
+			animationPlayer.play("idle")
+		else:
+			animationPlayer.play("wall_slide")
+			
+	if Input.is_action_just_pressed("jump") and (is_on_floor() or not timer_coyote.is_stopped()) and jump_amount < 2:
+		velocity.y = JUMP_SPEED - 200 * jump_amount
+		jump_amount += 1
 	
 	if cast.is_colliding() and Input.is_action_just_pressed("teleport"):
 		Engine.time_scale = 0.2
 		
 	if cast.is_colliding() and Input.is_action_just_released("teleport"):
+		jump_amount = max(jump_amount - 1, 0)
 		Engine.time_scale = 1.0
 		get_parent().player_moved = true
 		teleport()
-		
-	if not is_on_wall() and not is_on_floor():
-		if direction:
-			velocity.x = direction * SPEED/2 * delta
-			
-	if is_on_floor():
-		if direction:
-			if direction < 0:
-				flip_h(false)
-			else:
-				flip_h(true)
-			animationPlayer.play("walk")
-			velocity.x = direction * SPEED * delta
-		else:
-			animationPlayer.play("idle")
-			velocity.x = move_toward(velocity.x, 0, SPEED)
-		
-		if not jumped and Input.is_action_just_pressed("jump"):
-			velocity.y = JUMP_SPEED
-			jumped = true
 	
-	if is_on_wall_only() and velocity.y > 0:
-		wall_slide(delta)
-		if Input.is_action_just_pressed("jump"):
-			velocity.x = JUMP_SPEED * -get_wall_normal().x
-			velocity.y = JUMP_SPEED
-			jumped = true
-	
-	if not jumped and Input.is_action_just_pressed("jump") and (is_on_floor() or not timer_coyote.is_stopped()):
-		velocity.y = JUMP_SPEED
-		jumped = true
 		
-	var was_on_floor = is_on_floor()
+	was_on_floor = is_on_floor()
 	move_and_slide()
 	if not is_on_floor() and was_on_floor:
 		timer_coyote.start()
