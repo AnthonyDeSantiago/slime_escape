@@ -11,10 +11,21 @@ class_name Player
 @export var teleport_range: float = 800
 @export var SPEED: float = 25000
 @export var JUMP_SPEED: float = -500
+@export var GRAVITY_NORMAL: float = 20
+@export var GRAVITY_WALL: float = 8.5
+@export var WALL_JUMP_PUSH_FORCE: float = 200.0
+
+var wall_contact_coyote: float = 0.0
+var WALL_CONTACT_COYOTE_TIME: float = 0.2
+var wall_jump_lock: float = 0.0
+const WALL_JUMP_LOCK_TIME: float = 0.05
+var look_dir_x: int = 1
 
 var normal_vector: Vector2 = Vector2.UP
 var was_on_floor: bool
 var jump_amount: int
+var wall_jump_amount: int
+var has_moved: bool = false
 
 func _ready() -> void:
 	normal_vector = Vector2.UP
@@ -24,13 +35,18 @@ func _physics_process(delta: float) -> void:
 	var grounded = is_on_floor()
 	shoot_ray()
 	
+	#if wall_jump_lock > 0.0:
+		#wall_jump_lock -= delta
+		#velocity.x = lerp(velocity.x, direction * SPEED, SPEED)
+	
 	if not grounded:
-		velocity += get_gravity() * delta
+		velocity.y += GRAVITY_NORMAL
 		animationPlayer.play("wall_slide")
 		if direction:
 			animatedSprite.flip_h = velocity.x > 0
 	else:
 		jump_amount = 0
+		wall_jump_amount = 0
 	
 	if direction:
 		velocity.x = direction * SPEED * delta
@@ -47,6 +63,7 @@ func _physics_process(delta: float) -> void:
 	if Input.is_action_just_pressed("jump") and (is_on_floor() or not timer_coyote.is_stopped()) and jump_amount < 2:
 		velocity.y = JUMP_SPEED - 200 * jump_amount
 		jump_amount += 1
+		
 	
 	if cast.is_colliding() and Input.is_action_just_pressed("teleport"):
 		Engine.time_scale = 0.2
@@ -57,7 +74,7 @@ func _physics_process(delta: float) -> void:
 		get_parent().player_moved = true
 		teleport()
 	
-		
+	wall_slide(delta)
 	was_on_floor = is_on_floor()
 	move_and_slide()
 	if not is_on_floor() and was_on_floor:
@@ -71,14 +88,20 @@ func idle():
 		animationPlayer.play("idle")
 		
 func wall_slide(delta: float):
-	var dot_prod = get_wall_normal().dot(Vector2.RIGHT)
-	if dot_prod > 0:
-		animatedSprite.flip_h = false
+	if is_on_floor() or wall_contact_coyote > 0.0 and wall_jump_amount < 1:
+		if Input.is_action_just_pressed("jump"):
+			wall_jump_amount += 1
+			velocity.y = JUMP_SPEED
+			if wall_contact_coyote > 0.0:
+				velocity.x = -look_dir_x * WALL_JUMP_PUSH_FORCE
+				wall_jump_lock = WALL_JUMP_LOCK_TIME
+				
+	if !is_on_floor() and velocity.y > 0 and is_on_wall() and velocity.x != 0:
+		look_dir_x = sign(velocity.x)
+		wall_contact_coyote = WALL_CONTACT_COYOTE_TIME
+		velocity.y = GRAVITY_WALL
 	else:
-		animatedSprite.flip_h = true
-	
-	animationPlayer.play("wall_slide")
-	velocity.y = wall_slide_speed * delta
+		wall_contact_coyote -= delta
 		
 func shoot_ray():
 	cast.target_position = (get_global_mouse_position() - global_position).normalized() * teleport_range
@@ -98,5 +121,4 @@ func flip_h(flag: bool):
 		animatedSprite.flip_h = true
 	else:
 		animatedSprite.flip_h = false
-
 	

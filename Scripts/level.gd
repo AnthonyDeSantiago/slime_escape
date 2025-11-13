@@ -10,6 +10,7 @@ extends Node2D
 @onready var label_game_over: Label = $UI_Layer/UI/Game_Over/Game_Over_Label
 @onready var timer_game: Timer = $Game_Timer
 @onready var tile_water: TileMapLayer = $water
+@onready var player: Player = $player
 
 @export var texture: Texture2D
 @export var ray_length: float = 10000
@@ -20,12 +21,12 @@ extends Node2D
 @export var start_tilemap_position = 600
 
 var cam_speed
-var player: Player
 var cast_target_position
 var player_moved: bool = false
 var viewport_size: Vector2
 var viewport_hieght: float
 var viewport_width: float
+var has_moved: bool = false
 
 func _ready()->void:
 	tile_water.global_position.y = start_tilemap_position
@@ -33,8 +34,6 @@ func _ready()->void:
 	viewport_size = get_viewport().get_visible_rect().size
 	viewport_hieght = viewport_size.y
 	viewport_width = viewport_size.x
-	player = player_scene.instantiate()
-	add_child(player)
 
 func _draw():
 	if cast_target_position and Input.is_action_pressed("teleport"):
@@ -43,12 +42,14 @@ func _draw():
 
 func _process(delta):
 	var water_dist_from_top: float = -abs(start_tilemap_position - win_coord.position.y)
-	move_water(water_dist_from_top, delta)
+	player_has_moved()
+	if has_moved:
+		move_water(water_dist_from_top, delta)
+		pass
 	adjust_camera_speed(delta)
 	label_game_timer.text = str(int(timer_game.time_left))
 	if player_moved:
 		path_to_follow.progress_ratio += cam_speed
-	
 	if player.global_position.y <= win_coord.global_position.y:
 		win_condition()
 	
@@ -77,7 +78,7 @@ func adjust_camera_speed(delta):
 	
 func move_water(distance: float, delta: float):
 	var water_vel = distance/20
-	var new_y = tile_water.global_position.y + water_vel * delta * 0
+	var new_y = tile_water.global_position.y + water_vel * delta
 	tile_water.global_position.y  = new_y
 	
 func _on_play_again_button_pressed() -> void:
@@ -94,3 +95,7 @@ func _on_try_again_button_pressed() -> void:
 func _on_game_timer_timeout() -> void:
 	label_game_over.text = "Time ran out!"
 	lose_condition()
+
+func player_has_moved():
+	if Input.is_anything_pressed():
+		has_moved = true
