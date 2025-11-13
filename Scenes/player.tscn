@@ -1,10 +1,11 @@
-[gd_scene load_steps=30 format=3 uid="uid://bk52nbufeoc8h"]
+[gd_scene load_steps=31 format=3 uid="uid://bk52nbufeoc8h"]
 
 [ext_resource type="Script" uid="uid://bp5t20qeka27n" path="res://Scripts/player.gd" id="1_k5ftg"]
 [ext_resource type="Texture2D" uid="uid://6jgpeuk6q8wc" path="res://icon.svg" id="1_qaayf"]
 [ext_resource type="Texture2D" uid="uid://de53yupirn8ye" path="res://Assets/Characters/etherealwizard/ethereal_wizard/etherealwizard_idle-Sheet.png" id="3_6t5aa"]
 [ext_resource type="Texture2D" uid="uid://brrmaqfty730p" path="res://Assets/Characters/etherealwizard/ethereal_wizard/etherealwizard_walk-Sheet.png" id="4_fkybt"]
 [ext_resource type="Texture2D" uid="uid://vh5swoactggk" path="res://Assets/Characters/etherealwizard/ethereal_wizard/etherealwizard_wall_slide-Sheet.png" id="4_vgqql"]
+[ext_resource type="Texture2D" uid="uid://2i8yiulfyj0c" path="res://Assets/teleport_cooldown_icon.png" id="6_x3wgy"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_vgqql"]
 atlas = ExtResource("3_6t5aa")
@@ -352,3 +353,15 @@ wait_time = 0.2
 [node name="CollisionShape2D" type="CollisionShape2D" parent="area_player"]
 position = Vector2(5, 12.5)
 shape = SubResource("RectangleShape2D_fkybt")
+
+[node name="TeleportCooldown" type="Timer" parent="."]
+one_shot = true
+
+[node name="TeleportCooldownBar" type="TextureProgressBar" parent="."]
+offset_left = -6.0
+offset_top = -69.0
+offset_right = 58.0
+offset_bottom = -5.0
+value = 100.0
+fill_mode = 4
+texture_progress = ExtResource("6_x3wgy")

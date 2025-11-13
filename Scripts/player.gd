@@ -6,13 +6,15 @@ class_name Player
 @onready var animationPlayer: AnimationPlayer = $AnimationPlayer
 @onready var cast: RayCast2D = $RayCast2D
 @onready var timer_coyote: Timer = $CoyoteTimer
+@onready var timer_teleport: Timer = $TeleportCooldown
+@onready var bar_teleport_cooldown: TextureProgressBar = $TeleportCooldownBar
 
 @export var wall_slide_speed: float = 9000
 @export var teleport_range: float = 800
 @export var SPEED: float = 25000
-@export var JUMP_SPEED: float = -500
+@export var JUMP_SPEED: float = -700
 @export var GRAVITY_NORMAL: float = 20
-@export var GRAVITY_WALL: float = 8.5
+@export var GRAVITY_WALL: float = 10
 @export var WALL_JUMP_PUSH_FORCE: float = 200.0
 
 var wall_contact_coyote: float = 0.0
@@ -26,18 +28,23 @@ var was_on_floor: bool
 var jump_amount: int
 var wall_jump_amount: int
 var has_moved: bool = false
+var cooldown_teleport: float = 1.0
 
 func _ready() -> void:
 	normal_vector = Vector2.UP
+	timer_teleport.wait_time = cooldown_teleport
 
 func _physics_process(delta: float) -> void:
+	bar_teleport_cooldown.global_position = get_global_mouse_position() + Vector2(10, 10)
+	bar_teleport_cooldown.value = (cooldown_teleport - timer_teleport.time_left) * 100
+	if bar_teleport_cooldown.value >= 100:
+		bar_teleport_cooldown.visible = false
+	else:
+		bar_teleport_cooldown.visible = true
+	print("timer: ", timer_teleport.time_left)
 	var direction := Input.get_axis("left", "right")
 	var grounded = is_on_floor()
 	shoot_ray()
-	
-	#if wall_jump_lock > 0.0:
-		#wall_jump_lock -= delta
-		#velocity.x = lerp(velocity.x, direction * SPEED, SPEED)
 	
 	if not grounded:
 		velocity.y += GRAVITY_NORMAL
@@ -61,14 +68,14 @@ func _physics_process(delta: float) -> void:
 			animationPlayer.play("wall_slide")
 			
 	if Input.is_action_just_pressed("jump") and (is_on_floor() or not timer_coyote.is_stopped()) and jump_amount < 2:
-		velocity.y = JUMP_SPEED - 200 * jump_amount
+		velocity.y = JUMP_SPEED - 100 * jump_amount
 		jump_amount += 1
 		
-	
-	if cast.is_colliding() and Input.is_action_just_pressed("teleport"):
+	if cast.is_colliding() and Input.is_action_just_pressed("teleport") and timer_teleport.is_stopped():
 		Engine.time_scale = 0.2
 		
-	if cast.is_colliding() and Input.is_action_just_released("teleport"):
+	if cast.is_colliding() and Input.is_action_just_released("teleport") and timer_teleport.is_stopped():
+		timer_teleport.start()
 		jump_amount = max(jump_amount - 1, 0)
 		Engine.time_scale = 1.0
 		get_parent().player_moved = true

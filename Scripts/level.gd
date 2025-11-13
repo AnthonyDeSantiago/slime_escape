@@ -36,7 +36,7 @@ func _ready()->void:
 	viewport_width = viewport_size.x
 
 func _draw():
-	if cast_target_position and Input.is_action_pressed("teleport"):
+	if cast_target_position and player.timer_teleport.is_stopped() and Input.is_action_pressed("teleport"):
 		draw_dashed_line(player.global_position, cast_target_position, Color.ALICE_BLUE, 5, 5, true, true)
 		draw_circle(cast_target_position, 10, Color.AQUA)
 
@@ -83,11 +83,13 @@ func move_water(distance: float, delta: float):
 	
 func _on_play_again_button_pressed() -> void:
 	get_tree().paused = false
+	Engine.time_scale = 1
 	get_tree().reload_current_scene()
 	pass # Replace with function body.
 
 
 func _on_try_again_button_pressed() -> void:
+	Engine.time_scale = 1
 	get_tree().paused = false
 	get_tree().reload_current_scene()
 	pass # Replace with function body.
