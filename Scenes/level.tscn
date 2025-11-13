@@ -6,6 +6,24 @@
 [ext_resource type="Texture2D" uid="uid://dj4ccj1vb7sco" path="res://Assets/Tileset/Tileset/Bricks.png" id="4_81xng"]
 [ext_resource type="Texture2D" uid="uid://bb1d63mc2orjd" path="res://Assets/Tileset/Tileset/Tileset Elements/running_water.png" id="5_wqkje"]
 
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_0f350"]
+texture = ExtResource("5_wqkje")
+separation = Vector2i(3, 0)
+texture_region_size = Vector2i(96, 2000)
+0:0/animation_columns = 4
+0:0/animation_speed = 10.0
+0:0/animation_frame_0/duration = 1.0
+0:0/animation_frame_1/duration = 1.0
+0:0/animation_frame_2/duration = 1.0
+0:0/animation_frame_3/duration = 1.0
+0:0/0 = 0
+
+[sub_resource type="TileSet" id="TileSet_8c0lf"]
+tile_size = Vector2i(96, 2000)
+sources/4 = SubResource("TileSetAtlasSource_0f350")
+
+[sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_81xng"]
+
 [sub_resource type="Curve2D" id="Curve2D_pnink"]
 _data = {
 "points": PackedVector2Array(0, 0, 0, 0, 0, 0, 0, -5000, 0, 0, 0, -5000)
@@ -38,27 +56,22 @@ texture = ExtResource("4_81xng")
 physics_layer_0/collision_layer = 1
 sources/0 = SubResource("TileSetAtlasSource_wqkje")
 
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_0f350"]
-texture = ExtResource("5_wqkje")
-separation = Vector2i(3, 0)
-texture_region_size = Vector2i(96, 2000)
-0:0/animation_columns = 4
-0:0/animation_frame_0/duration = 1.0
-0:0/animation_frame_1/duration = 1.0
-0:0/animation_frame_2/duration = 1.0
-0:0/animation_frame_3/duration = 1.0
-0:0/0 = 0
-
-[sub_resource type="TileSet" id="TileSet_8c0lf"]
-tile_size = Vector2i(96, 2000)
-sources/4 = SubResource("TileSetAtlasSource_0f350")
-
-[sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_81xng"]
-
 [node name="level" type="Node2D"]
 script = ExtResource("1_s8ag2")
 texture = ExtResource("2_7nw55")
 player_scene = ExtResource("1_1ono0")
+
+[node name="water" type="TileMapLayer" parent="."]
+position = Vector2(0, 600)
+tile_map_data = PackedByteArray("AAD6/wAABAAAAAAAAAD7/wAABAAAAAAAAAD8/wAABAAAAAAAAAD9/wAABAAAAAAAAAD+/wAABAAAAAAAAAD//wAABAAAAAAAAAAAAAAABAAAAAAAAAABAAAABAAAAAAAAAACAAAABAAAAAAAAAADAAAABAAAAAAAAAAEAAAABAAAAAAAAAAFAAAABAAAAAAAAAAGAAAABAAAAAAAAAAHAAAABAAAAAAAAAAIAAAABAAAAAAAAAAJAAAABAAAAAAAAAAKAAAABAAAAAAAAAD4/wAABAAAAAAAAAD5/wAABAAAAAAAAAALAAAABAAAAAAAAAAMAAAABAAAAAAAAAANAAAABAAAAAAAAAD1/wAABAAAAAAAAAD2/wAABAAAAAAAAAD3/wAABAAAAAAAAAA=")
+tile_set = SubResource("TileSet_8c0lf")
+
+[node name="Area2D" type="Area2D" parent="water"]
+position = Vector2(0, -2)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="water/Area2D"]
+shape = SubResource("WorldBoundaryShape2D_81xng")
+debug_color = Color(0.2425749, 0.16403013, 0.9999998, 0.41960785)
 
 [node name="RayCast2D" type="RayCast2D" parent="."]
 visible = false
@@ -147,18 +160,7 @@ wait_time = 20.0
 one_shot = true
 autostart = true
 
-[node name="water" type="TileMapLayer" parent="."]
-position = Vector2(0, 600)
-tile_map_data = PackedByteArray("AAD6/wAABAAAAAAAAAD7/wAABAAAAAAAAAD8/wAABAAAAAAAAAD9/wAABAAAAAAAAAD+/wAABAAAAAAAAAD//wAABAAAAAAAAAAAAAAABAAAAAAAAAABAAAABAAAAAAAAAACAAAABAAAAAAAAAADAAAABAAAAAAAAAAEAAAABAAAAAAAAAAFAAAABAAAAAAAAAAGAAAABAAAAAAAAAAHAAAABAAAAAAAAAAIAAAABAAAAAAAAAAJAAAABAAAAAAAAAAKAAAABAAAAAAAAAD4/wAABAAAAAAAAAD5/wAABAAAAAAAAAALAAAABAAAAAAAAAAMAAAABAAAAAAAAAANAAAABAAAAAAAAAD1/wAABAAAAAAAAAD2/wAABAAAAAAAAAD3/wAABAAAAAAAAAA=")
-tile_set = SubResource("TileSet_8c0lf")
-
-[node name="Area2D" type="Area2D" parent="water"]
-position = Vector2(0, -2)
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="water/Area2D"]
-shape = SubResource("WorldBoundaryShape2D_81xng")
-debug_color = Color(0.2425749, 0.16403013, 0.9999998, 0.41960785)
-
+[connection signal="area_entered" from="water/Area2D" to="." method="_on_area_2d_area_entered"]
 [connection signal="pressed" from="UI_Layer/UI/Game_Over/Try_Again_Button" to="." method="_on_try_again_button_pressed"]
 [connection signal="pressed" from="UI_Layer/UI/Game_Win/Play_Again_Button" to="." method="_on_play_again_button_pressed"]
 [connection signal="timeout" from="Game_Timer" to="." method="_on_game_timer_timeout"]

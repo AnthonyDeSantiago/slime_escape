@@ -1,4 +1,4 @@
-[gd_scene load_steps=29 format=3 uid="uid://bk52nbufeoc8h"]
+[gd_scene load_steps=30 format=3 uid="uid://bk52nbufeoc8h"]
 
 [ext_resource type="Script" uid="uid://bp5t20qeka27n" path="res://Scripts/player.gd" id="1_k5ftg"]
 [ext_resource type="Texture2D" uid="uid://6jgpeuk6q8wc" path="res://icon.svg" id="1_qaayf"]
@@ -317,6 +317,9 @@ _data = {
 &"wall_slide": SubResource("Animation_vgqql")
 }
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_fkybt"]
+size = Vector2(30, 65)
+
 [node name="player" type="CharacterBody2D"]
 script = ExtResource("1_k5ftg")
 
@@ -343,3 +346,9 @@ shape = SubResource("RectangleShape2D_dwlj4")
 
 [node name="CoyoteTimer" type="Timer" parent="."]
 wait_time = 0.2
+
+[node name="area_player" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="area_player"]
+position = Vector2(5, 12.5)
+shape = SubResource("RectangleShape2D_fkybt")

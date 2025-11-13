@@ -52,7 +52,7 @@ func _process(delta):
 	if player.global_position.y <= win_coord.global_position.y:
 		win_condition()
 	
-	if (camera.global_position.y + viewport_hieght/2) < player.global_position.y:
+	if player.global_position.y > tile_water.global_position.y:
 		lose_condition()
 
 
@@ -71,11 +71,9 @@ func adjust_camera_speed(delta):
 	var dif = (camera.global_position.y - player.global_position.y) / (viewport_hieght/2)
 	
 	if player.global_position.y < camera.global_position.y:
-		print("difference: ", dif)
 		cam_speed = (CAM_SPEED + dif/10) * delta
 	else:
-		cam_speed = CAM_SPEED * delta
-		print("player below")
+		cam_speed = 0
 	
 func move_water(distance: float, delta: float):
 	var water_vel = distance/20
