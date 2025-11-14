@@ -54,11 +54,12 @@ texture = ExtResource("4_81xng")
 5:2/0 = 0
 
 [sub_resource type="TileSet" id="TileSet_0f350"]
-physics_layer_0/collision_layer = 1
+physics_layer_0/collision_layer = 524288
 sources/0 = SubResource("TileSetAtlasSource_wqkje")
 
 [node name="level" type="Node2D"]
 script = ExtResource("1_s8ag2")
+disable_water = true
 texture = ExtResource("2_7nw55")
 player_scene = ExtResource("1_1ono0")
 
@@ -160,13 +161,20 @@ text = "20"
 [node name="Game_Timer" type="Timer" parent="."]
 wait_time = 20.0
 one_shot = true
-autostart = true
 
 [node name="player" parent="." instance=ExtResource("1_1ono0")]
 position = Vector2(-1, 495)
 
 [node name="skeleton_ghost" parent="." node_paths=PackedStringArray("player") instance=ExtResource("6_0f350")]
-position = Vector2(109, -107)
+position = Vector2(116, -91)
+player = NodePath("../player")
+
+[node name="skeleton_ghost2" parent="." node_paths=PackedStringArray("player") instance=ExtResource("6_0f350")]
+position = Vector2(-178, -331)
+player = NodePath("../player")
+
+[node name="skeleton_ghost3" parent="." node_paths=PackedStringArray("player") instance=ExtResource("6_0f350")]
+position = Vector2(188, -490)
 player = NodePath("../player")
 
 [connection signal="area_entered" from="water/Area2D" to="." method="_on_area_2d_area_entered"]

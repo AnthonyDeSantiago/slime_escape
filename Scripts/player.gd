@@ -8,6 +8,7 @@ class_name Player
 @onready var timer_coyote: Timer = $CoyoteTimer
 @onready var timer_teleport: Timer = $TeleportCooldown
 @onready var bar_teleport_cooldown: TextureProgressBar = $TeleportCooldownBar
+@onready var projectile_spawn: Marker2D = $projectile_spawn
 
 @export var wall_slide_speed: float = 9000
 @export var teleport_range: float = 800
@@ -16,6 +17,7 @@ class_name Player
 @export var GRAVITY_NORMAL: float = 20
 @export var GRAVITY_WALL: float = 10
 @export var WALL_JUMP_PUSH_FORCE: float = 200.0
+@export var projectile_scene: PackedScene
 
 var wall_contact_coyote: float = 0.0
 var WALL_CONTACT_COYOTE_TIME: float = 0.2
@@ -35,13 +37,22 @@ func _ready() -> void:
 	timer_teleport.wait_time = cooldown_teleport
 
 func _physics_process(delta: float) -> void:
+	if Input.is_action_just_pressed("shoot"):
+		Engine.time_scale = .2
+	if Input.is_action_just_released("shoot"):
+		Engine.time_scale = 1
+		var projectile: Projectile = projectile_scene.instantiate()
+		get_parent().add_child(projectile)
+		projectile.global_position = projectile_spawn.global_position
+		projectile.move_vec = (get_global_mouse_position() - projectile_spawn.global_position).normalized() * 300
+		projectile.look_at(get_global_mouse_position())
+		
 	bar_teleport_cooldown.global_position = get_global_mouse_position() + Vector2(10, 10)
 	bar_teleport_cooldown.value = (cooldown_teleport - timer_teleport.time_left) * 100
 	if bar_teleport_cooldown.value >= 100:
 		bar_teleport_cooldown.visible = false
 	else:
 		bar_teleport_cooldown.visible = true
-	print("timer: ", timer_teleport.time_left)
 	var direction := Input.get_axis("left", "right")
 	var grounded = is_on_floor()
 	shoot_ray()
@@ -95,7 +106,7 @@ func idle():
 		animationPlayer.play("idle")
 		
 func wall_slide(delta: float):
-	if is_on_floor() or wall_contact_coyote > 0.0 and wall_jump_amount < 1:
+	if is_on_floor() or wall_contact_coyote > 0.0:
 		if Input.is_action_just_pressed("jump"):
 			wall_jump_amount += 1
 			velocity.y = JUMP_SPEED
@@ -128,4 +139,7 @@ func flip_h(flag: bool):
 		animatedSprite.flip_h = true
 	else:
 		animatedSprite.flip_h = false
+	
+func reset_teleport_cooldown():
+	timer_teleport.stop()
 	

@@ -1,4 +1,5 @@
 extends Node2D
+class_name Level
 
 @onready var cast: RayCast2D = $RayCast2D
 @onready var path_to_follow: PathFollow2D = $Path2D/PathFollow2D
@@ -12,6 +13,7 @@ extends Node2D
 @onready var tile_water: TileMapLayer = $water
 @onready var player: Player = $player
 
+@export var disable_water: bool
 @export var texture: Texture2D
 @export var ray_length: float = 10000
 @export var start_rate = 1
@@ -36,14 +38,19 @@ func _ready()->void:
 	viewport_width = viewport_size.x
 
 func _draw():
+	if not cast_target_position and player.timer_teleport.is_stopped() and Input.is_action_pressed("teleport"):
+		draw_line(player.global_position, (get_global_mouse_position() - player.global_position).normalized() * 10000, Color.RED, 1, true)
+	
 	if cast_target_position and player.timer_teleport.is_stopped() and Input.is_action_pressed("teleport"):
 		draw_dashed_line(player.global_position, cast_target_position, Color.ALICE_BLUE, 5, 5, true, true)
 		draw_circle(cast_target_position, 10, Color.AQUA)
+	if Input.is_action_pressed("shoot"):
+		draw_dashed_line(player.projectile_spawn.global_position, get_global_mouse_position(), Color.FIREBRICK, 5, 5)
 
 func _process(delta):
 	var water_dist_from_top: float = -abs(start_tilemap_position - win_coord.position.y)
 	player_has_moved()
-	if has_moved:
+	if has_moved and not disable_water:
 		move_water(water_dist_from_top, delta)
 		pass
 	adjust_camera_speed(delta)
