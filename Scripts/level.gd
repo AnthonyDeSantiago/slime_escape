@@ -12,6 +12,7 @@ class_name Level
 @onready var timer_game: Timer = $Game_Timer
 @onready var tile_water: TileMapLayer = $water
 @onready var player: Player = $player
+@onready var pause_menu: MarginContainer = $UI_Layer/Pause_Menu
 
 @export var disable_water: bool
 @export var texture: Texture2D

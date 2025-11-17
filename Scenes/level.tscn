@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=4 uid="uid://wefjfva66bka"]
+[gd_scene load_steps=15 format=4 uid="uid://wefjfva66bka"]
 
 [ext_resource type="PackedScene" uid="uid://bk52nbufeoc8h" path="res://Scenes/player.tscn" id="1_1ono0"]
 [ext_resource type="Script" uid="uid://d3ye14xnv6dkt" path="res://Scripts/level.gd" id="1_s8ag2"]
@@ -6,6 +6,8 @@
 [ext_resource type="Texture2D" uid="uid://dj4ccj1vb7sco" path="res://Assets/Tileset/Tileset/Bricks.png" id="4_81xng"]
 [ext_resource type="Texture2D" uid="uid://bb1d63mc2orjd" path="res://Assets/Tileset/Tileset/Tileset Elements/running_water.png" id="5_wqkje"]
 [ext_resource type="PackedScene" uid="uid://clj2xu4beda60" path="res://Scenes/skeleton_ghost.tscn" id="6_0f350"]
+[ext_resource type="FontFile" uid="uid://dj6k4sshioatd" path="res://Assets/Fonts/Aladin-Regular.ttf" id="6_8c0lf"]
+[ext_resource type="Script" uid="uid://blnb3o8c8g7io" path="res://Scripts/ui_layer.gd" id="6_754fn"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_0f350"]
 texture = ExtResource("5_wqkje")
@@ -58,6 +60,7 @@ physics_layer_0/collision_layer = 524288
 sources/0 = SubResource("TileSetAtlasSource_wqkje")
 
 [node name="level" type="Node2D"]
+process_mode = 1
 script = ExtResource("1_s8ag2")
 disable_water = true
 texture = ExtResource("2_7nw55")
@@ -101,6 +104,7 @@ gizmo_extents = 119.5
 
 [node name="UI_Layer" type="CanvasLayer" parent="."]
 process_mode = 3
+script = ExtResource("6_754fn")
 
 [node name="UI" type="MarginContainer" parent="UI_Layer"]
 anchors_preset = 8
@@ -158,11 +162,52 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 50
 text = "20"
 
+[node name="Pause_Menu" type="MarginContainer" parent="UI_Layer"]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -51.0
+offset_top = -32.5
+offset_right = 51.0
+offset_bottom = 32.5
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="VBoxContainer" type="VBoxContainer" parent="UI_Layer/Pause_Menu"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="Label_Pause" type="Label" parent="UI_Layer/Pause_Menu/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_fonts/font = ExtResource("6_8c0lf")
+theme_override_font_sizes/font_size = 52
+text = "Pause"
+
+[node name="Button_Continue" type="Button" parent="UI_Layer/Pause_Menu/VBoxContainer"]
+layout_mode = 2
+text = "Continue"
+
+[node name="Button_Restart" type="Button" parent="UI_Layer/Pause_Menu/VBoxContainer"]
+layout_mode = 2
+text = "Restart"
+
+[node name="Button_Quit" type="Button" parent="UI_Layer/Pause_Menu/VBoxContainer"]
+layout_mode = 2
+text = "Quit To Main"
+
 [node name="Game_Timer" type="Timer" parent="."]
 wait_time = 20.0
 one_shot = true
 
 [node name="player" parent="." instance=ExtResource("1_1ono0")]
+process_mode = 1
 position = Vector2(-1, 495)
 
 [node name="skeleton_ghost" parent="." node_paths=PackedStringArray("player") instance=ExtResource("6_0f350")]
@@ -180,4 +225,6 @@ player = NodePath("../player")
 [connection signal="area_entered" from="water/Area2D" to="." method="_on_area_2d_area_entered"]
 [connection signal="pressed" from="UI_Layer/UI/Game_Over/Try_Again_Button" to="." method="_on_try_again_button_pressed"]
 [connection signal="pressed" from="UI_Layer/UI/Game_Win/Play_Again_Button" to="." method="_on_play_again_button_pressed"]
+[connection signal="pressed" from="UI_Layer/Pause_Menu/VBoxContainer/Button_Continue" to="UI_Layer" method="_on_button_continue_pressed"]
+[connection signal="pressed" from="UI_Layer/Pause_Menu/VBoxContainer/Button_Restart" to="UI_Layer" method="_on_button_restart_pressed"]
 [connection signal="timeout" from="Game_Timer" to="." method="_on_game_timer_timeout"]
