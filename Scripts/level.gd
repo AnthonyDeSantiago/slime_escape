@@ -2,11 +2,9 @@ extends Node2D
 class_name Level
 
 @onready var cast: RayCast2D = $RayCast2D
-@onready var path_to_follow: PathFollow2D = $Path2D/PathFollow2D
 @onready var ui_game_over: VBoxContainer = $UI_Layer/UI/Game_Over
 @onready var ui_game_win: VBoxContainer = $UI_Layer/UI/Game_Win
 @onready var win_coord: Marker2D = $win_coord
-@onready var camera: Camera2D = $Path2D/PathFollow2D/Camera2D
 @onready var label_game_timer: Label = $UI_Layer/HUD/Game_Timer_Label
 @onready var label_game_over: Label = $UI_Layer/UI/Game_Over/Game_Over_Label
 @onready var timer_game: Timer = $Game_Timer
@@ -54,10 +52,8 @@ func _process(delta):
 	if has_moved and not disable_water:
 		move_water(water_dist_from_top, delta)
 		pass
-	adjust_camera_speed(delta)
 	label_game_timer.text = str(int(timer_game.time_left))
-	if player_moved:
-		path_to_follow.progress_ratio += cam_speed
+	
 	if player.global_position.y <= win_coord.global_position.y:
 		win_condition()
 	
@@ -76,13 +72,13 @@ func lose_condition():
 	ui_game_over.visible = true
 	cam_speed = 0
 
-func adjust_camera_speed(delta):
-	var dif = (camera.global_position.y - player.global_position.y) / (viewport_hieght/2)
-	
-	if player.global_position.y < camera.global_position.y:
-		cam_speed = (CAM_SPEED + dif/10) * delta
-	else:
-		cam_speed = 0
+#func adjust_camera_speed(delta):
+	#var dif = (camera.global_position.y - player.global_position.y) / (viewport_hieght/2)
+	#
+	#if player.global_position.y < camera.global_position.y:
+		#cam_speed = (CAM_SPEED + dif/10) * delta
+	#else:
+		#cam_speed = 0
 	
 func move_water(distance: float, delta: float):
 	var water_vel = distance/20

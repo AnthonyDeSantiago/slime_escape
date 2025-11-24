@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=4 uid="uid://wefjfva66bka"]
+[gd_scene load_steps=16 format=4 uid="uid://wefjfva66bka"]
 
 [ext_resource type="PackedScene" uid="uid://bk52nbufeoc8h" path="res://Scenes/player.tscn" id="1_1ono0"]
 [ext_resource type="Script" uid="uid://d3ye14xnv6dkt" path="res://Scripts/level.gd" id="1_s8ag2"]
@@ -27,6 +27,12 @@ tile_size = Vector2i(96, 2000)
 sources/4 = SubResource("TileSetAtlasSource_0f350")
 
 [sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_81xng"]
+
+[sub_resource type="Curve2D" id="Curve2D_pnink"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 0, 0, 0, -5000, 0, 0, 0, -5000)
+}
+point_count = 2
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_wqkje"]
 texture = ExtResource("4_81xng")
@@ -60,11 +66,10 @@ script = ExtResource("1_s8ag2")
 disable_water = true
 texture = ExtResource("2_7nw55")
 player_scene = ExtResource("1_1ono0")
-start_tilemap_position = 1000
 
 [node name="water" type="TileMapLayer" parent="."]
 z_index = 10
-position = Vector2(0, 1000)
+position = Vector2(0, 600)
 tile_map_data = PackedByteArray("AAD6/wAABAAAAAAAAAD7/wAABAAAAAAAAAD8/wAABAAAAAAAAAD9/wAABAAAAAAAAAD+/wAABAAAAAAAAAD//wAABAAAAAAAAAAAAAAABAAAAAAAAAABAAAABAAAAAAAAAACAAAABAAAAAAAAAADAAAABAAAAAAAAAAEAAAABAAAAAAAAAAFAAAABAAAAAAAAAAGAAAABAAAAAAAAAAHAAAABAAAAAAAAAAIAAAABAAAAAAAAAAJAAAABAAAAAAAAAAKAAAABAAAAAAAAAD4/wAABAAAAAAAAAD5/wAABAAAAAAAAAALAAAABAAAAAAAAAAMAAAABAAAAAAAAAANAAAABAAAAAAAAAD1/wAABAAAAAAAAAD2/wAABAAAAAAAAAD3/wAABAAAAAAAAAA=")
 tile_set = SubResource("TileSet_8c0lf")
 
@@ -78,6 +83,16 @@ debug_color = Color(0.2425749, 0.16403013, 0.9999998, 0.41960785)
 [node name="RayCast2D" type="RayCast2D" parent="."]
 visible = false
 target_position = Vector2(0, 1000)
+
+[node name="Path2D" type="Path2D" parent="."]
+curve = SubResource("Curve2D_pnink")
+
+[node name="PathFollow2D" type="PathFollow2D" parent="Path2D"]
+rotation = 1.5708
+rotates = false
+
+[node name="Camera2D" type="Camera2D" parent="Path2D/PathFollow2D"]
+scale = Vector2(2, 2)
 
 [node name="walls" type="TileMapLayer" parent="."]
 scale = Vector2(5, 5)
@@ -196,9 +211,6 @@ one_shot = true
 process_mode = 1
 position = Vector2(-1, 495)
 
-[node name="MainCamera" type="Camera2D" parent="player"]
-script = ExtResource("9_bvt00")
-
 [node name="skeleton_ghost" parent="." node_paths=PackedStringArray("player") instance=ExtResource("6_0f350")]
 position = Vector2(116, -91)
 player = NodePath("../player")
@@ -210,6 +222,9 @@ player = NodePath("../player")
 [node name="skeleton_ghost3" parent="." node_paths=PackedStringArray("player") instance=ExtResource("6_0f350")]
 position = Vector2(188, -490)
 player = NodePath("../player")
+
+[node name="main_camera" type="Camera2D" parent="."]
+script = ExtResource("9_bvt00")
 
 [connection signal="area_entered" from="water/Area2D" to="." method="_on_area_2d_area_entered"]
 [connection signal="pressed" from="UI_Layer/UI/Game_Over/Try_Again_Button" to="." method="_on_try_again_button_pressed"]

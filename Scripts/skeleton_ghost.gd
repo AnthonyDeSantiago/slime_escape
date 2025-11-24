@@ -68,5 +68,8 @@ func flip_sprite():
 			anim.flip_h = false
 
 func _on_attack_landed(area: Area2D) -> void:
-	if area.get_parent() is Player:
-		print("attack landed")
+	var area_parent = area.get_parent()
+	if area_parent is Player:
+		area_parent.take_damage()
+		var knockback_direction = (area_parent.global_position - global_position).normalized()
+		area_parent.apply_knockback(knockback_direction, 800, 0.12)

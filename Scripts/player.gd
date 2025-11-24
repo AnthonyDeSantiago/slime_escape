@@ -31,12 +31,28 @@ var jump_amount: int
 var wall_jump_amount: int
 var has_moved: bool = false
 var cooldown_teleport: float = 1.0
+var knockback: Vector2 = Vector2.ZERO
+var knockback_timer: float = 0.0
 
 func _ready() -> void:
 	normal_vector = Vector2.UP
 	timer_teleport.wait_time = cooldown_teleport
 
 func _physics_process(delta: float) -> void:
+	if knockback_timer > 0.0:
+		velocity = knockback
+		knockback_timer -= delta
+		if knockback_timer < 0.0:
+			knockback = Vector2.ZERO
+	else:
+		_movement(delta)
+	
+	move_and_slide()
+	if not is_on_floor() and was_on_floor:
+		timer_coyote.start()
+	queue_redraw()
+	
+func _movement(delta: float):
 	if Input.is_action_just_pressed("shoot"):
 		Engine.time_scale = .2
 	if Input.is_action_just_released("shoot"):
@@ -61,15 +77,15 @@ func _physics_process(delta: float) -> void:
 		velocity.y += GRAVITY_NORMAL
 		animationPlayer.play("wall_slide")
 		if direction:
-			animatedSprite.flip_h = velocity.x > 0
+			flip_h(velocity.x > 0)
 	else:
 		jump_amount = 0
 		wall_jump_amount = 0
 	
 	if direction:
+		flip_h(velocity.x > 0)
 		velocity.x = direction * SPEED * delta
 		if grounded:
-			animatedSprite.flip_h = velocity.x > 0
 			animationPlayer.play("walk")
 	else:
 		velocity.x = move_toward(velocity.x, 0, SPEED)
@@ -94,11 +110,7 @@ func _physics_process(delta: float) -> void:
 	
 	wall_slide(delta)
 	was_on_floor = is_on_floor()
-	move_and_slide()
-	if not is_on_floor() and was_on_floor:
-		timer_coyote.start()
-	queue_redraw()
-	
+	pass
 	
 func idle():
 	if is_on_floor():
@@ -135,11 +147,26 @@ func teleport():
 		velocity = Vector2(0, 0)
 
 func flip_h(flag: bool):
+	print("diff", projectile_spawn.position.x)
 	if flag:
 		animatedSprite.flip_h = true
+		projectile_spawn.position.x = abs(projectile_spawn.position.x)
+		if not is_on_floor():
+			projectile_spawn.position.x = -abs(projectile_spawn.position.x)
 	else:
 		animatedSprite.flip_h = false
+		projectile_spawn.position.x = -abs(projectile_spawn.position.x)
+		if not is_on_floor():
+			projectile_spawn.position.x = abs(projectile_spawn.position.x)
 	
 func reset_teleport_cooldown():
 	timer_teleport.stop()
+
+func take_damage():
+	MainCamera.instance.shake()
+	$anim_effects.play("take_hit")
+
+func apply_knockback(direction: Vector2, force: float, knockback_duration: float) -> void:
+	knockback = direction * force
+	knockback_timer = knockback_duration
 	
