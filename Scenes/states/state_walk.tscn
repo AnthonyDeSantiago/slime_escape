@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://2dw37jedcjh8"]
+
+[ext_resource type="Script" uid="uid://xevg6ftna4pj" path="res://Scripts/states/state_walk.gd" id="1_inqhi"]
+
+[node name="state_walk" type="Node2D"]
+script = ExtResource("1_inqhi")

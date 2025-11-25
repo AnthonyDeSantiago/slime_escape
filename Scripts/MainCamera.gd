@@ -5,11 +5,13 @@ class_name MainCamera
 static var instance: MainCamera
 @export var duration: float = .25
 @export var strength: float = 20
+@export var zoom_val: float = .5
 @export var target: Node2D
 
 var tw: Tween = null
 
 func _ready():
+	zoom = Vector2(zoom_val, zoom_val)
 	instance = self
 	position_smoothing_enabled = true
 
