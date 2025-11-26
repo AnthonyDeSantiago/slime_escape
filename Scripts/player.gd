@@ -33,23 +33,34 @@ var has_moved: bool = false
 var cooldown_teleport: float = 1.0
 var knockback: Vector2 = Vector2.ZERO
 var knockback_timer: float = 0.0
+var isGrounded: bool = false
 
 func _ready() -> void:
 	normal_vector = Vector2.UP
 	timer_teleport.wait_time = cooldown_teleport
 
-func _physics_process(delta: float) -> void:
-	if knockback_timer > 0.0:
-		velocity = knockback
-		knockback_timer -= delta
-		if knockback_timer < 0.0:
-			knockback = Vector2.ZERO
+func _physics_process(_delta: float) -> void:
+	if not is_on_floor():
+		velocity.y += GRAVITY_NORMAL
+		isGrounded = false
 	else:
-		_movement(delta)
+		isGrounded = true
 	
+	print("isGrounded:", isGrounded)
+		
+	#if knockback_timer > 0.0:
+		#velocity = knockback
+		#knockback_timer -= delta
+		#if knockback_timer < 0.0:
+			#knockback = Vector2.ZERO
+	#else:
+		#_movement(delta)
+	#
 	move_and_slide()
-	if not is_on_floor() and was_on_floor:
-		timer_coyote.start()
+	#if not is_on_floor() and was_on_floor:
+		#timer_coyote.start()
+	
+	
 	queue_redraw()
 	
 func _movement(delta: float):
@@ -147,7 +158,6 @@ func teleport():
 		velocity = Vector2(0, 0)
 
 func flip_h(flag: bool):
-	print("diff", projectile_spawn.position.x)
 	if flag:
 		animatedSprite.flip_h = true
 		projectile_spawn.position.x = abs(projectile_spawn.position.x)

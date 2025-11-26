@@ -1,12 +1,16 @@
-[gd_scene load_steps=36 format=3 uid="uid://bk52nbufeoc8h"]
+[gd_scene load_steps=40 format=3 uid="uid://bk52nbufeoc8h"]
 
 [ext_resource type="Script" uid="uid://bp5t20qeka27n" path="res://Scripts/player.gd" id="1_k5ftg"]
-[ext_resource type="Texture2D" uid="uid://6jgpeuk6q8wc" path="res://icon.svg" id="1_qaayf"]
 [ext_resource type="PackedScene" uid="uid://dm5sblyvosxge" path="res://Scenes/projectile.tscn" id="2_3smsa"]
 [ext_resource type="Texture2D" uid="uid://de53yupirn8ye" path="res://Assets/Characters/etherealwizard/ethereal_wizard/etherealwizard_idle-Sheet.png" id="3_6t5aa"]
 [ext_resource type="Texture2D" uid="uid://brrmaqfty730p" path="res://Assets/Characters/etherealwizard/ethereal_wizard/etherealwizard_walk-Sheet.png" id="4_fkybt"]
 [ext_resource type="Texture2D" uid="uid://vh5swoactggk" path="res://Assets/Characters/etherealwizard/ethereal_wizard/etherealwizard_wall_slide-Sheet.png" id="4_vgqql"]
 [ext_resource type="Texture2D" uid="uid://2i8yiulfyj0c" path="res://Assets/teleport_cooldown_icon.png" id="6_x3wgy"]
+[ext_resource type="Script" uid="uid://dkowk81poeb38" path="res://Scripts/state_machine.gd" id="8_tx1dd"]
+[ext_resource type="Script" uid="uid://bxj30n5isn86f" path="res://Scripts/states/state_idle.gd" id="9_gymyn"]
+[ext_resource type="Script" uid="uid://xevg6ftna4pj" path="res://Scripts/states/state_walk.gd" id="10_pu2lt"]
+[ext_resource type="Script" uid="uid://cykci7pnsnkxd" path="res://Scripts/states/state_initializer.gd" id="10_tx1dd"]
+[ext_resource type="Script" uid="uid://dv5mdcgl0n40q" path="res://state_fall.gd" id="11_gymyn"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_vgqql"]
 atlas = ExtResource("3_6t5aa")
@@ -207,6 +211,7 @@ tracks/4/keys = {
 [sub_resource type="Animation" id="Animation_x3wgy"]
 resource_name = "idle"
 length = 0.3
+loop_mode = 1
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
@@ -275,6 +280,7 @@ tracks/0/keys = {
 [sub_resource type="Animation" id="Animation_l6n3p"]
 resource_name = "walk"
 length = 0.7
+loop_mode = 1
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
@@ -302,6 +308,7 @@ tracks/1/keys = {
 
 [sub_resource type="Animation" id="Animation_vgqql"]
 resource_name = "wall_slide"
+loop_mode = 1
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
@@ -348,9 +355,6 @@ _data = {
 &"wall_slide": SubResource("Animation_vgqql")
 }
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_fkybt"]
-size = Vector2(30, 65)
-
 [sub_resource type="Animation" id="Animation_f1ek2"]
 length = 0.001
 tracks/0/type = "value"
@@ -388,14 +392,13 @@ _data = {
 &"take_hit": SubResource("Animation_8erm5")
 }
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_fkybt"]
+size = Vector2(30, 65)
+
 [node name="player" type="CharacterBody2D"]
 collision_mask = 524288
 script = ExtResource("1_k5ftg")
 projectile_scene = ExtResource("2_3smsa")
-
-[node name="Icon" type="Sprite2D" parent="."]
-visible = false
-texture = ExtResource("1_qaayf")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 scale = Vector2(5, 5)
@@ -403,9 +406,14 @@ sprite_frames = SubResource("SpriteFrames_8erm5")
 animation = &"wall_slide"
 frame = 1
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+[node name="anim_sprite" type="AnimationPlayer" parent="."]
 libraries = {
 &"": SubResource("AnimationLibrary_x3wgy")
+}
+
+[node name="anim_effects" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_tx1dd")
 }
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
@@ -423,6 +431,7 @@ wait_time = 0.2
 [node name="CollisionShape2D" type="CollisionShape2D" parent="area_player"]
 position = Vector2(5, 12.5)
 shape = SubResource("RectangleShape2D_fkybt")
+disabled = true
 
 [node name="TeleportCooldown" type="Timer" parent="."]
 wait_time = 2.0
@@ -440,7 +449,30 @@ texture_progress = ExtResource("6_x3wgy")
 [node name="projectile_spawn" type="Marker2D" parent="."]
 position = Vector2(58, -27)
 
-[node name="anim_effects" type="AnimationPlayer" parent="."]
-libraries = {
-&"": SubResource("AnimationLibrary_tx1dd")
+[node name="State_Machine" type="Node" parent="." node_paths=PackedStringArray("initial_state", "initializer")]
+script = ExtResource("8_tx1dd")
+initial_state = NodePath("State_Idle")
+initializer = NodePath("State_Initializer")
+metadata/_custom_type_script = "uid://dkowk81poeb38"
+
+[node name="State_Initializer" type="Node2D" parent="State_Machine"]
+script = ExtResource("10_tx1dd")
+references = {
+"anim_effects": NodePath("../../anim_effects"),
+"anim_sprite": NodePath("../../anim_sprite"),
+"player": NodePath("../.."),
+"sprite": NodePath("../../AnimatedSprite2D")
 }
+metadata/_custom_type_script = "uid://cykci7pnsnkxd"
+
+[node name="State_Idle" type="Node2D" parent="State_Machine"]
+script = ExtResource("9_gymyn")
+metadata/_custom_type_script = "uid://bxj30n5isn86f"
+
+[node name="State_Walk" type="Node2D" parent="State_Machine"]
+script = ExtResource("10_pu2lt")
+metadata/_custom_type_script = "uid://xevg6ftna4pj"
+
+[node name="State_Fall" type="Node2D" parent="State_Machine"]
+script = ExtResource("11_gymyn")
+metadata/_custom_type_script = "uid://dv5mdcgl0n40q"

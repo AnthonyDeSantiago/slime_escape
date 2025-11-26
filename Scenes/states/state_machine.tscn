@@ -1,17 +1,7 @@
-[gd_scene load_steps=4 format=3 uid="uid://c216vtsvf0tok"]
+[gd_scene load_steps=2 format=3 uid="uid://c216vtsvf0tok"]
 
 [ext_resource type="Script" uid="uid://dkowk81poeb38" path="res://Scripts/state_machine.gd" id="1_yfsl4"]
-[ext_resource type="Script" uid="uid://bxj30n5isn86f" path="res://Scripts/states/state_idle.gd" id="2_irmp5"]
-[ext_resource type="Script" uid="uid://xevg6ftna4pj" path="res://Scripts/states/state_walk.gd" id="3_dptbj"]
 
 [node name="state_machine" type="Node2D" node_paths=PackedStringArray("initial_state")]
 script = ExtResource("1_yfsl4")
-initial_state = NodePath("StateIdle")
-
-[node name="StateIdle" type="Node2D" parent="."]
-script = ExtResource("2_irmp5")
-metadata/_custom_type_script = "uid://bxj30n5isn86f"
-
-[node name="StateWalk" type="Node2D" parent="."]
-script = ExtResource("3_dptbj")
-metadata/_custom_type_script = "uid://xevg6ftna4pj"
+initial_state = NodePath("")
