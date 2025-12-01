@@ -45,9 +45,6 @@ func _physics_process(_delta: float) -> void:
 		isGrounded = false
 	else:
 		isGrounded = true
-	
-	print("isGrounded:", isGrounded)
-		
 	#if knockback_timer > 0.0:
 		#velocity = knockback
 		#knockback_timer -= delta
@@ -63,7 +60,7 @@ func _physics_process(_delta: float) -> void:
 	_wand(_delta)
 	queue_redraw()
 
-func _wand(delta: float):
+func _wand(_delta: float):
 	if Input.is_action_just_pressed("shoot"):
 		Engine.time_scale = .2
 	if Input.is_action_just_released("shoot"):

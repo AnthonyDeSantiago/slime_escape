@@ -5,6 +5,10 @@ var player: Player
 var anim_sprite: AnimationPlayer
 var sprite: AnimatedSprite2D
 
+var COYOTE_TIME: float = 0.2
+var coyote_time: float = 0.0
+
+
 func Enter():
 	super.Enter()
 	player = get_node(initializer.references["player"])
@@ -24,6 +28,9 @@ func Update(delta: float):
 		emit_signal("Transitioned", self, "State_Fall")
 	if not Input.is_anything_pressed():
 		emit_signal("Transitioned", self, "State_Idle")
+	
+	if player.isGrounded and Input.is_action_just_pressed("jump"):
+		player.velocity.y = player.JUMP_SPEED - 100 * player.jump_amount
 	
 	var direction = Input.get_axis("left", "right")
 	
