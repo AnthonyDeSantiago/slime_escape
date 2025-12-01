@@ -1,7 +1,7 @@
 extends Node2D
 class_name State
 
-var initializer: State_Initializer
+var initializer: Initializer
 
 signal Transitioned
 
@@ -20,5 +20,5 @@ func Update(_delta: float):
 func Physics_Update(_delta: float):
 	pass
 
-func set_initializer(init: State_Initializer):
+func set_initializer(init: Initializer):
 	initializer = init

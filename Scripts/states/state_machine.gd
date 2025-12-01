@@ -2,7 +2,7 @@ extends Node
 class_name State_Machine
 
 @export var initial_state : State
-@export var initializer: State_Initializer
+@export var initializer: Initializer
 
 var current_state : State
 var states : Dictionary = {}

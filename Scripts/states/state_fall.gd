@@ -17,7 +17,7 @@ func Exit():
 func Physics_Update(_delta: float):
 	pass
 	
-func Update(delta: float) -> void:
+func Update(_delta: float) -> void:
 	if player.isGrounded:
 		emit_signal("Transitioned", self, "State_Idle")
 		

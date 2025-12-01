@@ -1,5 +1,5 @@
 extends Node2D
-class_name State_Initializer
+class_name Initializer
 
 @export var references: Dictionary
 @export var values: Dictionary

@@ -60,10 +60,10 @@ func _physics_process(_delta: float) -> void:
 	#if not is_on_floor() and was_on_floor:
 		#timer_coyote.start()
 	
-	
+	_wand(_delta)
 	queue_redraw()
-	
-func _movement(delta: float):
+
+func _wand(delta: float):
 	if Input.is_action_just_pressed("shoot"):
 		Engine.time_scale = .2
 	if Input.is_action_just_released("shoot"):
@@ -73,16 +73,27 @@ func _movement(delta: float):
 		projectile.global_position = projectile_spawn.global_position
 		projectile.move_vec = (get_global_mouse_position() - projectile_spawn.global_position).normalized() * 300
 		projectile.look_at(get_global_mouse_position())
-		
+	
 	bar_teleport_cooldown.global_position = get_global_mouse_position() + Vector2(10, 10)
 	bar_teleport_cooldown.value = (cooldown_teleport - timer_teleport.time_left) * 100
 	if bar_teleport_cooldown.value >= 100:
 		bar_teleport_cooldown.visible = false
 	else:
 		bar_teleport_cooldown.visible = true
+	shoot_ray()
+	if cast.is_colliding() and Input.is_action_just_pressed("teleport") and timer_teleport.is_stopped():
+		Engine.time_scale = 0.2
+		
+	if cast.is_colliding() and Input.is_action_just_released("teleport") and timer_teleport.is_stopped():
+		timer_teleport.start()
+		jump_amount = max(jump_amount - 1, 0)
+		Engine.time_scale = 1.0
+		get_parent().player_moved = true
+		teleport()
+		
+func _movement(delta: float):
 	var direction := Input.get_axis("left", "right")
 	var grounded = is_on_floor()
-	shoot_ray()
 	
 	if not grounded:
 		velocity.y += GRAVITY_NORMAL
@@ -108,16 +119,6 @@ func _movement(delta: float):
 	if Input.is_action_just_pressed("jump") and (is_on_floor() or not timer_coyote.is_stopped()) and jump_amount < 2:
 		velocity.y = JUMP_SPEED - 100 * jump_amount
 		jump_amount += 1
-		
-	if cast.is_colliding() and Input.is_action_just_pressed("teleport") and timer_teleport.is_stopped():
-		Engine.time_scale = 0.2
-		
-	if cast.is_colliding() and Input.is_action_just_released("teleport") and timer_teleport.is_stopped():
-		timer_teleport.start()
-		jump_amount = max(jump_amount - 1, 0)
-		Engine.time_scale = 1.0
-		get_parent().player_moved = true
-		teleport()
 	
 	wall_slide(delta)
 	was_on_floor = is_on_floor()
