@@ -1,4 +1,4 @@
-[gd_scene load_steps=40 format=3 uid="uid://bk52nbufeoc8h"]
+[gd_scene load_steps=41 format=3 uid="uid://bk52nbufeoc8h"]
 
 [ext_resource type="Script" uid="uid://bp5t20qeka27n" path="res://Scripts/player.gd" id="1_k5ftg"]
 [ext_resource type="PackedScene" uid="uid://dm5sblyvosxge" path="res://Scenes/projectile.tscn" id="2_3smsa"]
@@ -11,6 +11,7 @@
 [ext_resource type="Script" uid="uid://xevg6ftna4pj" path="res://Scripts/states/state_walk.gd" id="10_pu2lt"]
 [ext_resource type="Script" uid="uid://cykci7pnsnkxd" path="res://Scripts/states/state_initializer.gd" id="10_tx1dd"]
 [ext_resource type="Script" uid="uid://dv5mdcgl0n40q" path="res://Scripts/states/state_fall.gd" id="11_gymyn"]
+[ext_resource type="Script" uid="uid://dad3kjf6im2vx" path="res://Scripts/states/state_wall_sliding.gd" id="12_pu2lt"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_vgqql"]
 atlas = ExtResource("3_6t5aa")
@@ -476,3 +477,7 @@ metadata/_custom_type_script = "uid://xevg6ftna4pj"
 [node name="State_Fall" type="Node2D" parent="State_Machine"]
 script = ExtResource("11_gymyn")
 metadata/_custom_type_script = "uid://dv5mdcgl0n40q"
+
+[node name="State_Wall_Sliding" type="Node2D" parent="State_Machine"]
+script = ExtResource("12_pu2lt")
+metadata/_custom_type_script = "uid://dad3kjf6im2vx"
