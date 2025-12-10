@@ -14,11 +14,14 @@ func Enter():
 func Exit():
 	super.Exit()
 	anim_sprite.stop()
+	initializer.values["previous_velocity"] = player.velocity
+	print("vel:", initializer.values["previous_velocity"])
+
 	
-func Physics_Update(_delta: float):
+func Update(_delta: float):
 	pass
 	
-func Update(delta: float) -> void:
+func Physics_Update(delta: float) -> void:
 	if player.isGrounded:
 		emit_signal("Transitioned", self, "State_Idle")
 	if not player.is_on_wall() and not player.isGrounded:
@@ -40,7 +43,9 @@ func Update(delta: float) -> void:
 	else:
 		player.wall_contact_coyote -= delta
 		
-	if Input.is_action_just_pressed("jump") and player.jump_amount < 2 and player.wall_jump_count < 1:
+	if Input.is_action_just_pressed("jump") and player.jump_amount < 2:
 		player.velocity.y = player.JUMP_SPEED - 100 * player.jump_amount
 		player.wall_jump_count += 1
+		player.velocity.x = player.get_wall_normal().x * player.WALL_JUMP_PUSH_FORCE
+		initializer.values["previous_velocity"] = player.velocity
 	pass

@@ -16,12 +16,13 @@ func Enter():
 
 func Exit():
 	super.Exit()
+	initializer.values["previous_velocity"] = player.velocity
 	pass
 	
-func Physics_Update(_delta: float):
+func Update(_delta: float):
 	pass
 	
-func Update(_delta: float) -> void:
+func Physics_Update(_delta: float) -> void:
 	if not player.isGrounded:
 		emit_signal("Transitioned", self, "State_Fall")
 		

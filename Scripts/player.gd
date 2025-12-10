@@ -12,14 +12,15 @@ class_name Player
 
 @export_group("Player Settings")
 @export var SPEED: float = 25000
+@export var SPEED_AIR: float = 1000
 @export var JUMP_SPEED: float = -700
 @export var GRAVITY_NORMAL: float = 20
-@export var GRAVITY_WALL: float = 10
-@export var WALL_JUMP_PUSH_FORCE: float = 200.0
 
 @export_category("Wall Slide Settings")
 @export var WALL_CONTACT_COYOTE_TIME: float = 0.2
 @export var WALL_JUMP_LOCK_TIME: float = 0.05
+@export var WALL_JUMP_PUSH_FORCE: float = 400.0
+@export var GRAVITY_WALL: float = 10
 
 
 @export_group("Wand Settings")

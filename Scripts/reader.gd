@@ -24,7 +24,6 @@ func create_level():
 		EditorInterface.get_resource_filesystem().scan()
 	m.clear()
 	if level_texture:
-		print("Refreshing Level")
 		image = level_texture.get_image()
 		height = image.get_height()
 		width = image.get_width()
@@ -36,5 +35,4 @@ func create_level():
 					m.set_cell(position, 0, Vector2(0, 0))
 				if pixel == Color.RED:
 					m.set_cell(position, 1, Vector2(0, 0))
-					print("win_pos", position)
 					win_coord = Vector2(position)

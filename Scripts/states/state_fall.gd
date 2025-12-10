@@ -3,21 +3,23 @@ class_name State_Fall
 
 var anim_sprite: AnimationPlayer
 var player: Player
+var init: bool = false
 
 func Enter():
 	super.Enter()
 	anim_sprite = get_node(initializer.references["anim_sprite"])
 	anim_sprite.play("wall_slide")
 	player = get_node(initializer.references["player"])
+	player.velocity = initializer.values["previous_velocity"]
 
 func Exit():
 	super.Exit()
 	anim_sprite.stop()
 	
-func Physics_Update(_delta: float):
+func Update(_delta: float):
 	pass
 	
-func Update(_delta: float) -> void:
+func Physics_Update(delta: float) -> void:
 	if player.isGrounded:
 		emit_signal("Transitioned", self, "State_Idle")
 	if !player.is_on_floor() and player.velocity.y > 0 and player.is_on_wall():
@@ -30,10 +32,11 @@ func Update(_delta: float) -> void:
 	var direction = Input.get_axis("left", "right")
 
 	if direction:
-		player.velocity.x = player.SPEED * _delta * direction
+		player.velocity.x = direction * player.SPEED_AIR * delta
 		if direction < 0:
 			player.animatedSprite.flip_h = false
 		else:
 			player.animatedSprite.flip_h = true
 	else:
-		player.velocity.x = 0
+		player.velocity.x = move_toward(player.velocity.x, 0, 1)
+		pass

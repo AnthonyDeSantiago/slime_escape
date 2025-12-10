@@ -18,12 +18,13 @@ func Enter():
 
 func Exit():
 	super.Exit()
+	initializer.values["previous_velocity"] = player.velocity
 	anim_sprite.stop()
 	
-func Physics_Update(_delta: float):
+func Update(_delta: float):
 	pass
 
-func Update(delta: float):
+func Physics_Update(delta: float):
 	if not player.isGrounded and not player.is_on_wall():
 		emit_signal("Transitioned", self, "State_Fall")
 	if not Input.is_anything_pressed():

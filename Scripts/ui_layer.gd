@@ -7,18 +7,16 @@ func _ready() -> void:
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	if Input.is_action_just_pressed("pause"):
 		pause_game()
 	pass
 
 func pause_game():
 	if get_tree().paused:
-		print("Unpausing game")
 		pause_menu.visible = false
 		get_tree().paused = false
 	else:
-		print("Pausing game")
 		pause_menu.visible = true
 		get_tree().paused = true
 

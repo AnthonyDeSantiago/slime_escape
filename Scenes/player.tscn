@@ -399,6 +399,9 @@ size = Vector2(30, 65)
 [node name="player" type="CharacterBody2D"]
 collision_mask = 524288
 script = ExtResource("1_k5ftg")
+SPEED_AIR = 20000.0
+WALL_JUMP_PUSH_FORCE = 800.0
+GRAVITY_WALL = 100.0
 projectile_scene = ExtResource("2_3smsa")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
@@ -463,6 +466,9 @@ references = {
 "anim_sprite": NodePath("../../anim_sprite"),
 "player": NodePath("../.."),
 "sprite": NodePath("../../AnimatedSprite2D")
+}
+values = {
+"previous_velocity": Vector2(0, 0)
 }
 metadata/_custom_type_script = "uid://cykci7pnsnkxd"
 

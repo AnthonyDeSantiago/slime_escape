@@ -5,6 +5,7 @@ var initializer: Initializer
 
 signal Transitioned
 
+
 func Enter():
 	var state_machine: State_Machine = get_parent()
 	Transitioned.connect(state_machine.on_child_transition)
