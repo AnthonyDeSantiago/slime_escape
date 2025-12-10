@@ -10,33 +10,42 @@ class_name Player
 @onready var bar_teleport_cooldown: TextureProgressBar = $TeleportCooldownBar
 @onready var projectile_spawn: Marker2D = $projectile_spawn
 
-@export var wall_slide_speed: float = 9000
-@export var teleport_range: float = 800
+@export_group("Player Settings")
 @export var SPEED: float = 25000
 @export var JUMP_SPEED: float = -700
 @export var GRAVITY_NORMAL: float = 20
 @export var GRAVITY_WALL: float = 10
 @export var WALL_JUMP_PUSH_FORCE: float = 200.0
-@export var projectile_scene: PackedScene
 
+@export_category("Wall Slide Settings")
+@export var WALL_CONTACT_COYOTE_TIME: float = 0.2
+@export var WALL_JUMP_LOCK_TIME: float = 0.05
+
+
+@export_group("Wand Settings")
+@export var teleport_range: float = 800
+@export var projectile_scene: PackedScene
+@export var cooldown_teleport: float = 1.0
+
+
+# WALL SLIDE
 var wall_contact_coyote: float = 0.0
-var WALL_CONTACT_COYOTE_TIME: float = 0.2
 var wall_jump_lock: float = 0.0
-const WALL_JUMP_LOCK_TIME: float = 0.05
+var wall_jump_count: int = 0
 var look_dir_x: int = 1
 
-var normal_vector: Vector2 = Vector2.UP
+# PLAYER MOVEMENT
+var isGrounded: bool = false
+var has_moved: bool = false
 var was_on_floor: bool
 var jump_amount: int
-var wall_jump_amount: int
-var has_moved: bool = false
-var cooldown_teleport: float = 1.0
-var knockback: Vector2 = Vector2.ZERO
+
+# PUBLIC VARS
 var knockback_timer: float = 0.0
-var isGrounded: bool = false
+var knockback: Vector2 = Vector2.ZERO
+
 
 func _ready() -> void:
-	normal_vector = Vector2.UP
 	timer_teleport.wait_time = cooldown_teleport
 
 func _physics_process(_delta: float) -> void:
@@ -99,7 +108,6 @@ func _movement(delta: float):
 			flip_h(velocity.x > 0)
 	else:
 		jump_amount = 0
-		wall_jump_amount = 0
 	
 	if direction:
 		flip_h(velocity.x > 0)
@@ -123,13 +131,11 @@ func _movement(delta: float):
 	
 func idle():
 	if is_on_floor():
-		normal_vector = Vector2.UP
 		animationPlayer.play("idle")
 		
 func wall_slide(delta: float):
 	if is_on_floor() or wall_contact_coyote > 0.0:
 		if Input.is_action_just_pressed("jump"):
-			wall_jump_amount += 1
 			velocity.y = JUMP_SPEED
 			if wall_contact_coyote > 0.0:
 				velocity.x = -look_dir_x * WALL_JUMP_PUSH_FORCE

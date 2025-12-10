@@ -25,6 +25,7 @@ func Update(_delta: float) -> void:
 	
 	if Input.is_action_just_pressed("jump") and player.jump_amount < 2:
 		player.velocity.y = player.JUMP_SPEED - 100 * player.jump_amount
+		player.jump_amount += 1
 	
 	var direction = Input.get_axis("left", "right")
 

@@ -3,11 +3,13 @@ class_name State_Machine
 
 @export var initial_state : State
 @export var initializer: Initializer
+var player: Player
 
 var current_state : State
 var states : Dictionary = {}
 
 func _ready():
+	player = $".."
 	for child in get_children():
 		if child is State:
 			states[child.name.to_lower()] = child
@@ -21,6 +23,7 @@ func _ready():
 func _process(delta):
 	if current_state:
 		current_state.Update(delta)
+		print("current_state:", current_state, " jump_amount:", player.jump_amount)
 
 func _physics_process(delta):
 	if current_state:
