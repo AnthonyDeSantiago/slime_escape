@@ -401,7 +401,7 @@ collision_mask = 524288
 script = ExtResource("1_k5ftg")
 SPEED_AIR = 20000.0
 WALL_JUMP_PUSH_FORCE = 800.0
-GRAVITY_WALL = 100.0
+GRAVITY_WALL = 70.0
 projectile_scene = ExtResource("2_3smsa")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]

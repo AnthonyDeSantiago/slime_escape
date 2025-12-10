@@ -20,6 +20,8 @@ func Update(_delta: float):
 	pass
 	
 func Physics_Update(delta: float) -> void:
+	player.decrement_timers(delta)
+	
 	if player.isGrounded:
 		emit_signal("Transitioned", self, "State_Idle")
 	if !player.is_on_floor() and player.velocity.y > 0 and player.is_on_wall():
@@ -30,7 +32,8 @@ func Physics_Update(delta: float) -> void:
 		player.jump_amount += 1
 	
 	var direction = Input.get_axis("left", "right")
-
+	
+		
 	if direction:
 		player.velocity.x = direction * player.SPEED_AIR * delta
 		if direction < 0:
@@ -38,5 +41,4 @@ func Physics_Update(delta: float) -> void:
 		else:
 			player.animatedSprite.flip_h = true
 	else:
-		player.velocity.x = move_toward(player.velocity.x, 0, 1)
-		pass
+		player.velocity.x = move_toward(player.velocity.x, 0, player.SPEED_AIR)

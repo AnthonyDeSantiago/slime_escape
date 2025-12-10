@@ -12,6 +12,7 @@ func Enter():
 	player = get_node(initializer.references["player"])
 	player.velocity = Vector2.ZERO
 	player.jump_amount = 0
+	player.wall_jump_lock = 0
 	pass
 
 func Exit():

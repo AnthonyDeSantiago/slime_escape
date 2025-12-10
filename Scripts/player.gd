@@ -184,4 +184,11 @@ func take_damage():
 func apply_knockback(direction: Vector2, force: float, knockback_duration: float) -> void:
 	knockback = direction * force
 	knockback_timer = knockback_duration
+
+func decrement_timers(delta):
+	if wall_jump_lock > 0:
+		wall_jump_count -= delta
+	elif wall_jump_lock < 0:
+		wall_jump_lock = 0
+		
 	
